@@ -41,8 +41,10 @@ h1 em{font-style:normal;color:var(--cy)}
   border:1.5px solid var(--edge);font-size:14px;animation:slidein .3s ease both}
 @keyframes slidein{from{transform:translateY(-9px);opacity:0}to{transform:none;opacity:1}}
 .slot.rule{border-color:#3d4f7a;background:#141c2e}
-.slot .who{font:11px Consolas,ui-monospace,monospace;letter-spacing:1px;color:var(--dim);flex:none;width:46px}
+.slot .who{font:11px Consolas,ui-monospace,monospace;letter-spacing:1px;color:var(--dim);flex:none;width:52px}
 .slot .who.c{color:var(--cy)}
+.slot .who.k{color:var(--amb)}
+.slot.pulled{border-color:#5a4526;background:#1a1408}
 .slot .tx{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .slot .pin{flex:none;border:none;background:transparent;cursor:pointer;font-size:15px;opacity:.35;padding:0 2px}
 .slot .pin:hover{opacity:1}
@@ -64,6 +66,26 @@ h1 em{font-style:normal;color:var(--cy)}
 .mchip{padding:9px 14px;border-radius:11px;background:var(--chip);border:1.5px solid var(--vio);
   font-size:14px;display:flex;align-items:center;gap:9px}
 .mchip .led{width:9px;height:9px;border-radius:50%;background:var(--vio);box-shadow:0 0 8px var(--vio);flex:none}
+
+/* ── the cabinet ── */
+.toggle{display:inline-flex;align-items:center;gap:10px;padding:9px 15px;border-radius:11px;background:var(--chip);
+  border:1.5px solid var(--edge);cursor:pointer;font-size:14px;user-select:none;transition:.15s}
+.toggle .led{width:9px;height:9px;border-radius:50%;background:#3a4763;flex:none;transition:.15s}
+.toggle.on{border-color:var(--grn)}
+.toggle.on .led{background:var(--grn);box-shadow:0 0 8px var(--grn)}
+.rows{margin-top:12px;display:flex;flex-direction:column;gap:5px}
+.row{display:flex;gap:12px;font:12.5px Consolas,ui-monospace,monospace;padding:7px 11px;border-radius:8px;
+  background:#0c1019;border:1px solid var(--edge);color:var(--dim)}
+.row .d{color:var(--txt);width:34px;flex:none}
+.row.new{border-color:var(--grn);animation:slidein .35s ease both}
+.row.hit{border-color:var(--amb);background:#1a1408;color:var(--txt)}
+.cabmeta{font:11px Consolas,ui-monospace,monospace;color:#44557a;letter-spacing:1px;margin-top:9px}
+.answer{margin-top:13px;padding:12px 15px;border-radius:11px;border:1.5px solid var(--edge);
+  background:#0c1019;display:none;font-size:14.5px}
+.answer.show{display:block}
+.answer.bad{border-color:#5a2630;background:#160f14;color:var(--red)}
+.answer.good{border-color:#2c584a;background:#0c1a14;color:var(--grn)}
+.answer .note{display:block;margin-top:8px;font-size:12.5px;color:var(--dim)}
 
 /* ── controls ── */
 .runrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
@@ -106,7 +128,7 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
 
 <header>
   <h1>WHAT <em>CLAUDE</em> CAN SEE</h1>
-  <div class="sub">Claude has a <b>desk</b>, and it only fits so much. Everything on it, it knows. Everything that falls off, it does not — and it won&#39;t tell you it fell.</div>
+  <div class="sub">Claude has a <b>desk</b>, and it only fits so much. Everything on it, it knows. Everything that falls off, it does not — and it won&#39;t tell you it fell. Three places things can live, and mixing them up is the expensive mistake.</div>
 </header>
 
 <div class="card">
@@ -127,7 +149,20 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
 </div>
 
 <div class="card">
-  <h2>③ TALK TO IT</h2>
+  <h2>③ THE CABINET <i>— the record of what actually happened</i></h2>
+  <div class="why">Memory holds a few things about <b>you</b>. The cabinet holds <b>every row</b> — too many to ever sit on the desk. Claude doesn&#39;t carry it around; it goes and looks up the one row it needs. You can read and edit the same cabinet yourself.</div>
+  <div class="toggle" id="cabtog"><span class="led"></span><span id="cablbl">cabinet not connected</span></div>
+  <div class="rows" id="rows"></div>
+  <div class="cabmeta" id="cabmeta"></div>
+  <div class="runrow">
+    <button class="act" id="ask">❓ HOW DID TUESDAY DO?</button>
+    <button class="act" id="logshow">✎ log tonight&#39;s show</button>
+  </div>
+  <div class="answer" id="answer"></div>
+</div>
+
+<div class="card">
+  <h2>④ TALK TO IT</h2>
   <div class="why">Keep talking and watch the desk fill. Then ask it to do the job and see whether it still remembers your rule.</div>
   <div class="runrow">
     <button class="act" id="say">💬 SAY SOMETHING</button>
@@ -148,6 +183,8 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
   <p><b>That&#39;s what memory is for.</b> Anything you&#39;d have to repeat, put on the shelf. It costs no desk space and it survives every fall.</p>
   <p><b>A fresh chat is a clean desk, not a factory reset.</b> Hit "start a fresh chat" — the clutter goes, the shelf stays. That&#39;s why starting over often makes it sharper instead of dumber.</p>
   <p><b>Repeating yourself is a symptom.</b> If you&#39;re saying the same rule for the third time, it fell off. Don&#39;t say it louder — put it on the shelf.</p>
+  <p><b>"I don&#39;t know" comes out sounding like an answer.</b> Ask about Tuesday with no cabinet and you get a confident number that is simply invented — ask twice and it changes. Wrong doesn&#39;t look wrong. That&#39;s the thing to watch for.</p>
+  <p><b>Memory is not a filing cabinet.</b> The shelf is a few facts about you. The cabinet is every row of what happened — and it looks up the one row it needs instead of hauling all 340 onto the desk. Putting records on the shelf just buries the rules.</p>
 </div>
 
 <div class="nav"><a href="../">← back to HOW CLAUDE WORKS (the Shape Store)</a></div>
@@ -167,6 +204,11 @@ const CHAT=[
   ["you","punch up the middle"],["claude","new middle beat"],
 ];
 let desk=[],shelf=[],gone=[],chatI=0,uid=0;
+
+/* the cabinet — far more rows than could ever sit on the desk */
+const SEED=[["Sat",1120,240],["Sun",1010,185],["Tue",1240,310],["Wed",890,150],["Thu",1330,402]];
+let rows=[],rowTotal=0,cabinetOn=false,lastGuess=null,hitRow=null;
+const num=n=>n.toLocaleString("en-US");
 const $=s=>document.querySelector(s);
 const con=$("#con");
 const remembered=()=>desk.some(c=>c.rule)||shelf.some(c=>c.rule);
@@ -179,9 +221,10 @@ function draw(){
   if(!desk.length)d.innerHTML='<div class="none">the desk is empty — Claude knows nothing right now</div>';
   desk.forEach(c=>{
     const el=document.createElement("div");
-    el.className="slot"+(c.rule?" rule":"");
+    el.className="slot"+(c.rule?" rule":"")+(c.pulled?" pulled":"");
     const pinned=shelf.some(s=>s.id===c.id);
-    el.innerHTML='<span class="who'+(c.who==="claude"?" c":"")+'">'+c.who+'</span>'+
+    const wc=c.who==="claude"?" c":c.who==="cabinet"?" k":"";
+    el.innerHTML='<span class="who'+wc+'">'+c.who+'</span>'+
       '<span class="tx">'+c.tx+'</span>'+
       '<button class="pin'+(pinned?" done":"")+'" title="copy to memory">'+(pinned?"📌":"📍")+'</button>';
     el.querySelector(".pin").addEventListener("click",()=>pin(c));
@@ -195,6 +238,16 @@ function draw(){
   const g=$("#gonelist");g.innerHTML="";
   $("#gone").classList.toggle("show",gone.length>0);
   gone.forEach(c=>{const el=document.createElement("div");el.className="gonechip";el.textContent=c.tx;g.appendChild(el);});
+
+  const rw=$("#rows");rw.innerHTML="";
+  rows.forEach(r=>{const el=document.createElement("div");
+    el.className="row"+(r.fresh?" new":"")+(hitRow===r?" hit":"");
+    el.innerHTML='<span class="d">'+r.d+'</span><span>'+num(r.v)+' viewers</span><span>$'+r.g+'</span>';
+    rw.appendChild(el);});
+  $("#cabmeta").textContent="showing "+rows.length+" of "+num(rowTotal)+" rows · far too many for the desk";
+  $("#cabtog").className="toggle"+(cabinetOn?" on":"");
+  $("#cablbl").textContent=cabinetOn?"cabinet connected":"cabinet not connected";
+  $("#ask").disabled=false;$("#logshow").disabled=!cabinetOn;
 
   const n=desk.length;
   $("#cnt").textContent=n+" / "+CAP;
@@ -246,13 +299,52 @@ $("#test").addEventListener("click",()=>{
   push("claude","made you 6 things");draw();
 });
 
+$("#cabtog").addEventListener("click",()=>{
+  cabinetOn=!cabinetOn;hitRow=null;
+  log(cabinetOn?'<span class="a">▸ cabinet connected — it can look things up now.</span>'
+               :'<span class="d">▸ cabinet disconnected — it&#39;s on its own again.</span>');
+  draw();
+});
+
+$("#ask").addEventListener("click",()=>{
+  const a=$("#answer");
+  if(!cabinetOn){
+    const g=700+Math.floor(Math.random()*800), gg=120+Math.floor(Math.random()*300);
+    const repeat=lastGuess!==null&&lastGuess!==g;
+    a.className="answer show bad";
+    a.innerHTML='"Tuesday did around <b>'+num(g)+' viewers</b>, roughly $'+gg+'."'+
+      '<span class="note">✗ Made up. It has no record of Tuesday — but it answered anyway, and it sounded certain.'+
+      (repeat?' <b>Last time it said '+num(lastGuess)+'.</b> Ask again and the number changes, because it isn&#39;t reading anything.':' Ask again and watch the number change.')+'</span>';
+    log('<span class="r">▸ answered "'+num(g)+' viewers" — with nothing to read. That&#39;s a guess wearing a confident voice.</span>');
+    lastGuess=g;hitRow=null;draw();return;
+  }
+  const r=rows.find(x=>x.d==="Tue");
+  hitRow=r;
+  a.className="answer show good";
+  a.innerHTML='"Tuesday did <b>'+num(r.v)+' viewers</b> and $'+r.g+'."'+
+    '<span class="note">✓ Looked it up. It pulled <b>one row</b> onto the desk — not all '+num(rowTotal)+'. That&#39;s the whole trick.</span>';
+  log('<span class="a">▸ opens the cabinet, finds Tuesday, pulls that one row.</span>');
+  push("cabinet","📄 Tue — "+num(r.v)+" viewers, $"+r.g,{pulled:true});
+  draw();
+});
+
+$("#logshow").addEventListener("click",()=>{
+  const v=800+Math.floor(Math.random()*700), g=140+Math.floor(Math.random()*320);
+  rows.forEach(r=>r.fresh=false);
+  rows.push({d:"Fri",v,g,fresh:true});rowTotal++;
+  if(rows.length>6)rows.shift();
+  log('<span class="g">▸ an agent wrote tonight&#39;s row: '+num(v)+' viewers, $'+g+'.</span> Nobody has to remember it — next week it&#39;s just there.');
+  draw();
+});
+
 $("#fresh").addEventListener("click",()=>{
   desk=[];gone=[];chatI=0;
   clearLog();
   log('<span class="c">▸ fresh chat — the desk is wiped clean.</span>');
   if(shelf.length)log('<span class="v">▸ the shelf survived:</span> '+shelf.map(c=>'"'+c.tx.replace(/^\S+\s/,"")+'"').join(" · "));
   else log('<span class="d">▸ nothing was on the shelf, so nothing came back.</span>');
-  $("#result").className="result";
+  if(cabinetOn)log('<span class="a">▸ the cabinet is untouched — all '+num(rowTotal)+' rows. A new chat never costs you the records.</span>');
+  hitRow=null;$("#result").className="result";$("#answer").className="answer";
   draw();
 });
 
@@ -260,10 +352,12 @@ $("#reset").addEventListener("click",start);
 
 function start(){
   desk=[];shelf=[];gone=[];chatI=0;uid=0;
+  rows=SEED.map(([d,v,g])=>({d,v,g}));rowTotal=340;
+  cabinetOn=false;lastGuess=null;hitRow=null;
   push(RULE.who,RULE.tx,{rule:true});
   clearLog();
   log('<span class="d">▸ you told it one rule. It&#39;s card 1 on the desk.</span>');
-  $("#result").className="result";
+  $("#result").className="result";$("#answer").className="answer";
   draw();
 }
 start();
