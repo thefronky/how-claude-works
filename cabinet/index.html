@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Write It Down — the Source of Truth</title>
+<style>
+:root{
+  --bg:#0a0c12; --panel:#10141f; --edge:#232b3f; --txt:#e4ebf5; --dim:#8b98ad;
+  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --vio:#a78bfa; --red:#f87171;
+  --chip:#171d2d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
+body{padding-bottom:70px}
+.wrap{max-width:800px;margin:0 auto;padding:0 16px}
+
+header{padding:36px 0 4px;text-align:center}
+h1{font-size:clamp(22px,5vw,31px);font-weight:700;letter-spacing:1px}
+h1 em{font-style:normal;color:var(--cy)}
+.sub{color:var(--dim);margin-top:8px;font-size:15px;max-width:580px;margin-left:auto;margin-right:auto}
+.sub b{color:var(--txt)}
+
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:17px 19px;margin-top:18px}
+.card h2{font-size:12.5px;letter-spacing:2.5px;color:var(--dim);font-weight:600;margin-bottom:3px}
+.card h2 i{font-style:normal;color:#39465f;letter-spacing:0;text-transform:none}
+.card .why{color:var(--dim);font-size:13.5px;margin-bottom:12px}
+.card .why b{color:var(--txt)}
+
+.tray{display:flex;flex-wrap:wrap;gap:9px}
+.chip{padding:10px 15px;border-radius:11px;background:var(--chip);border:1.5px solid var(--edge);
+  font-size:14.5px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:10px;transition:.15s}
+.chip .led{width:9px;height:9px;border-radius:50%;background:#3a4763;transition:.15s;flex:none}
+.chip.on{border-color:var(--grn)}
+.chip.on .led{background:var(--grn);box-shadow:0 0 8px var(--grn)}
+.chip.off{opacity:.5}
+
+/* orders coming in */
+.orders{background:#0c1019;border:1px solid var(--edge);border-radius:12px;padding:10px;min-height:80px;
+  display:flex;flex-direction:column;gap:6px}
+.orders .none{color:#44557a;font-size:13px;font-style:italic;padding:4px 2px}
+.ord{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:9px;background:var(--chip);
+  border:1.5px solid var(--edge);font-size:14px;animation:slidein .3s ease both}
+@keyframes slidein{from{transform:translateX(-12px);opacity:0}to{transform:none;opacity:1}}
+.ord .nm{font-weight:600;flex:none}
+.ord .it{color:var(--dim);flex:1}
+.ord .amt{font:13px Consolas,ui-monospace,monospace;color:var(--grn);flex:none}
+.ord.lost{opacity:.28;border-style:dashed}
+.ord.lost .amt{color:var(--red);text-decoration:line-through}
+.dot{width:12px;height:12px;border-radius:3px;flex:none}
+
+/* the cabinet */
+.cab{background:#0c1019;border:1px solid var(--edge);border-radius:12px;padding:10px;min-height:80px;
+  display:flex;flex-direction:column;gap:5px}
+.cab .none{color:#44557a;font-size:13px;font-style:italic;padding:4px 2px}
+.row{display:flex;gap:10px;align-items:center;font:12.5px Consolas,ui-monospace,monospace;padding:7px 11px;
+  border-radius:8px;background:#10141f;border:1px solid var(--edge);color:var(--dim);animation:slidein .3s ease both}
+.row .rn{color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .ra{color:var(--grn);flex:none}
+.row.hit{border-color:var(--amb);background:#1a1408}
+.row.hit .rn{color:var(--amb)}
+.cabmeta{font:11px Consolas,ui-monospace,monospace;color:#44557a;letter-spacing:1px;margin-top:9px}
+
+.runrow{display:flex;gap:12px;margin-top:14px}
+#run{padding:13px 42px;border-radius:12px;border:1.5px solid #2c584a;font-size:16px;letter-spacing:2px;cursor:pointer;
+  background:linear-gradient(180deg,#1a3d2c,#0f2418);color:var(--grn);font-weight:700}
+#run:disabled{opacity:.4}
+#reset{padding:13px 18px;border-radius:12px;border:1.5px solid var(--edge);background:transparent;color:var(--dim);cursor:pointer;font-size:13px}
+
+.result{margin-top:14px;border-radius:12px;padding:15px 17px;display:none;border:1.5px solid var(--edge);background:#0c1019}
+.result.show{display:block}
+.result.bad{border-color:#5a2630;background:#160f14}
+.result.good{border-color:#2c584a;background:#0c1a14}
+.qline{font-size:13px;color:var(--dim);margin-bottom:9px}
+.said{font-size:17px;font-weight:700;margin-bottom:9px}
+.result.bad .said{color:var(--red)}
+.result.good .said{color:var(--grn)}
+.truth{font-size:13.5px;color:var(--dim);border-top:1px dashed #2a3348;padding-top:10px;margin-top:4px}
+.truth b{color:var(--txt)}
+
+.conlbl{font:11px Consolas,ui-monospace,monospace;letter-spacing:2px;color:#44557a;margin-top:16px;margin-bottom:-6px}
+.console{margin-top:14px;background:#070b13;border:1px solid var(--edge);border-radius:12px;padding:14px 16px;
+  font:13px/1.85 Consolas,ui-monospace,monospace;min-height:90px;white-space:pre-wrap}
+.console .c{color:var(--cy)} .console .g{color:var(--grn)} .console .a{color:var(--amb)}
+.console .r{color:var(--red)} .console .v{color:var(--vio)} .console .d{color:var(--dim)}
+
+.learnbox{margin-top:26px}
+.learnbox h3{font-size:13px;letter-spacing:2px;color:var(--cy);margin-bottom:10px}
+.learnbox p{color:var(--dim);font-size:14.5px;margin-bottom:11px}
+.learnbox p b{color:var(--txt)}
+.foot{text-align:center;color:#39465f;font-size:12.5px;margin-top:34px}
+.nav{text-align:center;margin-top:26px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.nav a{display:inline-block;padding:11px 18px;border-radius:11px;border:1px solid var(--edge);
+  background:var(--panel);color:var(--dim);text-decoration:none;font-size:13.5px}
+.nav a:hover{color:var(--txt);border-color:var(--cy)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>WRITE IT <em>DOWN</em></h1>
+  <div class="sub">Customers keep buying shapes. If nobody records the orders, Claude will still answer questions about them — it just won&#39;t be right. Flip the switch, press RUN.</div>
+</header>
+
+<div class="card">
+  <h2>① TODAY&#39;S ORDERS <i>— they arrive whether you&#39;re ready or not</i></h2>
+  <div class="why">Random customers, random amounts. This is the thing that actually happened.</div>
+  <div class="orders" id="orders"></div>
+</div>
+
+<div class="card">
+  <h2>② THE CABINET <i>— the source of truth</i></h2>
+  <div class="why">A row per order, kept forever. Not in Claude&#39;s head — a table you own, that you can open and fix yourself. <b>Switch it off and the orders still happen; they just go unrecorded.</b></div>
+  <div class="tray" id="tray"></div>
+  <div class="cab" id="cab" style="margin-top:12px"></div>
+  <div class="cabmeta" id="cabmeta"></div>
+</div>
+
+<div class="card">
+  <h2>③ THEN YOU ASK</h2>
+  <div class="why">At the end of the day you ask a normal question about a customer. Watch what comes back.</div>
+  <div class="runrow">
+    <button id="run">▶ RUN THE DAY</button>
+    <button id="reset">reset</button>
+  </div>
+  <div class="result" id="result">
+    <div class="qline" id="qline"></div>
+    <div class="said" id="said"></div>
+    <div class="truth" id="truthline"></div>
+  </div>
+  <div class="conlbl">▾ what it was thinking</div>
+  <div class="console" id="con"><span class="d">Claude&#39;s thinking will appear here…</span></div>
+</div>
+
+<div class="card learnbox">
+  <h3>THE WHOLE TRICK</h3>
+  <p><b>Unrecorded is unknowable.</b> The orders happened either way — you watched them arrive. But if nothing wrote them down, there is nothing to look up, and no amount of asking nicely brings them back.</p>
+  <p><b>It answers anyway.</b> That&#39;s the dangerous part. You don&#39;t get "I don&#39;t know" — you get a confident number in the right shape, and it changes every time you ask.</p>
+  <p><b>With the table, it stops guessing and starts counting.</b> It finds the customer&#39;s rows, adds them, and shows you which rows it used. You can check its work, because the rows are right there.</p>
+  <p><b>The table is yours, not the AI&#39;s.</b> It outlives the chat, the memory, and the machine. That&#39;s what makes it the source of truth — it stays right whether or not anything is running.</p>
+</div>
+
+<div class="nav">
+  <a href="../">① the shape store</a>
+  <a href="../desk/">② what claude can see</a>
+  <a href="../roles/">③ one engine, many outfits</a>
+</div>
+<div class="foot">a teaching toy · a simplified simulation of a real Claude setup</div>
+</div>
+
+<script>
+const NAMES=["Heavy Data Dan","Big Ledger Linda","Normalized Norman","Backup Barry",
+  "Cache Money Carl","Null Value Nancy","Foreign Key Fiona","Rowcount Rhonda",
+  "Index Ivan","Pivot Pete","Schema Steve","Dirty Read Deb"];
+const COLS={blue:"#4c8df0",green:"#43c96b",yellow:"#f0c93c",red:"#f0564c"};
+const CNAMES=Object.keys(COLS);
+const SHAPES=["squares","circles","triangles"];
+
+const on=new Set(["s_write"]);
+const has=id=>on.has(id);
+let today=[],rows=[],rowTotal=0,running=false,hit=null;
+const $=s=>document.querySelector(s);
+const con=$("#con");
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+const sw={id:"s_write",txt:"🗄 write each order to the cabinet"};
+(function(){const d=document.createElement("div");
+  d.className="chip"+(has(sw.id)?" on":" off");
+  d.innerHTML='<span class="led"></span>'+sw.txt;
+  d.addEventListener("click",()=>{if(running)return;
+    if(has(sw.id)){on.delete(sw.id);d.className="chip off";}
+    else{on.add(sw.id);d.className="chip on";}});
+  $("#tray").appendChild(d);})();
+
+function say(html,ms){return new Promise(res=>{const d=document.createElement("div");d.innerHTML=html;
+  con.appendChild(d);con.scrollTop=con.scrollHeight;setTimeout(res,ms||520);});}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+function makeOrder(name){
+  const q=1+Math.floor(Math.random()*5), c=pick(CNAMES), s=pick(SHAPES);
+  const amt=q*(3+Math.floor(Math.random()*6));
+  return {name:name||pick(NAMES),q,c,s,amt};
+}
+const label=o=>o.q+" "+o.c+" "+(o.q===1?o.s.replace(/e?s$/,""):o.s);
+
+function drawOrders(){
+  const el=$("#orders");el.innerHTML="";
+  if(!today.length){el.innerHTML='<div class="none">no orders yet — press RUN</div>';return;}
+  today.forEach(o=>{
+    const d=document.createElement("div");
+    d.className="ord"+(o.lost?" lost":"");
+    d.innerHTML='<span class="dot" style="background:'+COLS[o.c]+'"></span>'+
+      '<span class="nm">'+o.name+'</span><span class="it">bought '+label(o)+'</span>'+
+      '<span class="amt">$'+o.amt+'</span>';
+    el.appendChild(d);});
+}
+function drawCab(){
+  const el=$("#cab");el.innerHTML="";
+  if(!rows.length){el.innerHTML='<div class="none">empty — nothing has been written down</div>';}
+  rows.slice(-8).forEach(r=>{
+    const d=document.createElement("div");
+    d.className="row"+(hit&&hit.includes(r)?" hit":"");
+    d.innerHTML='<span class="rn">'+r.name+' · '+label(r)+'</span><span class="ra">$'+r.amt+'</span>';
+    el.appendChild(d);});
+  $("#cabmeta").textContent=rows.length
+    ? "showing "+Math.min(8,rows.length)+" of "+rowTotal+" rows"
+    : "0 rows";
+}
+
+async function run(){
+  if(running)return;running=true;$("#run").disabled=true;
+  const write=has("s_write");
+  today=[];hit=null;$("#result").className="result";con.innerHTML="";
+  drawOrders();drawCab();
+
+  /* one customer orders three times, so the answer needs adding up */
+  const star=pick(NAMES);
+  const plan=[makeOrder(star),makeOrder(),makeOrder(star),makeOrder(),makeOrder(star),makeOrder()];
+
+  await say('<span class="c">▸ the store opens. orders start coming in.</span>');
+  for(const o of plan){
+    today.push(o);drawOrders();
+    await say('<span class="a">▸ '+o.name+'</span> bought '+label(o)+' — $'+o.amt+'.',300);
+    if(write){rows.push(o);rowTotal++;drawCab();}
+    else{o.lost=true;drawOrders();}
+    await wait(120);
+  }
+
+  const total=plan.filter(o=>o.name===star).reduce((s,o)=>s+o.amt,0);
+  const cnt=plan.filter(o=>o.name===star).length;
+
+  if(write)await say('<span class="g">▸ '+plan.length+' orders written to the cabinet. '+rowTotal+' rows total.</span>');
+  else await say('<span class="r">▸ nothing was written down. the orders happened and then vanished.</span>');
+
+  await say('<span class="c">▸ you:</span> "how much did '+star+' spend today?"');
+
+  const res=$("#result");
+  $("#qline").textContent='You asked: how much did '+star+' spend today?';
+  if(write){
+    hit=rows.filter(r=>r.name===star);drawCab();
+    res.className="result show good";
+    $("#said").textContent="$"+total;
+    $("#truthline").innerHTML='✓ Counted, not guessed. It found <b>'+cnt+' rows</b> for '+star+' and added them — highlighted above, so you can check the arithmetic yourself.';
+    await say('<span class="g">▸ finds '+cnt+' rows for '+star+', adds them: $'+total+'.</span>');
+  }else{
+    const guess=Math.max(8,total+(Math.random()<.5?-1:1)*(7+Math.floor(Math.random()*40)));
+    res.className="result show bad";
+    $("#said").textContent="$"+guess;
+    $("#truthline").innerHTML='✗ Made up. '+star+' actually spent <b>$'+total+'</b> across '+cnt+' orders — you watched it happen. Nothing recorded it, so Claude had nothing to read and answered anyway. Run it again and the number will be different.';
+    await say('<span class="r">▸ answers "$'+guess+'" with nothing to read. The real figure was $'+total+'.</span>');
+    await say('<span class="a">▸ switch the cabinet on and run again.</span>');
+  }
+  running=false;$("#run").disabled=false;
+}
+$("#run").addEventListener("click",run);
+$("#reset").addEventListener("click",()=>{today=[];rows=[];rowTotal=0;hit=null;
+  $("#result").className="result";
+  con.innerHTML='<span class="d">Claude&#39;s thinking will appear here…</span>';
+  drawOrders();drawCab();});
+drawOrders();drawCab();
+</script>
+</body>
+</html>

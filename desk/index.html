@@ -83,6 +83,7 @@ h1 em{font-style:normal;color:var(--cy)}
 #run:disabled{opacity:.4}
 #reset{padding:13px 18px;border-radius:12px;border:1.5px solid var(--edge);background:transparent;color:var(--dim);cursor:pointer;font-size:13px}
 
+.conlbl{font:11px Consolas,ui-monospace,monospace;letter-spacing:2px;color:#44557a;margin-top:16px;margin-bottom:-6px}
 .console{margin-top:14px;background:#070b13;border:1px solid var(--edge);border-radius:12px;padding:14px 16px;
   font:13px/1.85 Consolas,ui-monospace,monospace;min-height:100px;white-space:pre-wrap}
 .console .c{color:var(--cy)} .console .g{color:var(--grn)} .console .a{color:var(--amb)}
@@ -154,11 +155,12 @@ h1 em{font-style:normal;color:var(--cy)}
     <button id="run">▶ RUN</button>
     <button id="reset">reset</button>
   </div>
-  <div class="console" id="con"><span class="d">Claude&#39;s thinking will appear here…</span></div>
   <div class="result" id="result">
     <div class="verdict" id="verdict"></div>
     <div class="swatches" id="sw"></div>
   </div>
+  <div class="conlbl">▾ what it was thinking</div>
+  <div class="console" id="con"><span class="d">Claude&#39;s thinking will appear here…</span></div>
 </div>
 
 <div class="card learnbox">
@@ -172,6 +174,7 @@ h1 em{font-style:normal;color:var(--cy)}
 <div class="nav">
   <a href="../">① the shape store</a>
   <a href="../roles/">③ one engine, many outfits</a>
+  <a href="../cabinet/">④ write it down</a>
 </div>
 <div class="foot">a teaching toy · a simplified simulation of a real Claude setup</div>
 </div>
