@@ -3,89 +3,88 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How Claude Works — a visual toy</title>
+<title>How Claude Works — shapes &amp; colors</title>
 <style>
 :root{
-  --bg:#0a0c12; --panel:#10141f; --edge:#222a3d; --txt:#e2e9f4; --dim:#8a97ac;
-  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --red:#f87171; --vio:#a78bfa;
-  --chip:#161c2b;
+  --bg:#0a0c12; --panel:#10141f; --edge:#232b3f; --txt:#e4ebf5; --dim:#8b98ad;
+  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --vio:#a78bfa; --red:#f87171;
+  --chip:#171d2d;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--txt);font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
 body{padding-bottom:70px}
-.wrap{max-width:860px;margin:0 auto;padding:0 18px}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
 
-header{padding:40px 0 8px;text-align:center}
-h1{font-size:clamp(24px,5vw,34px);font-weight:700;letter-spacing:1px}
+header{padding:38px 0 6px;text-align:center}
+h1{font-size:clamp(23px,5vw,32px);font-weight:700;letter-spacing:1px}
 h1 em{font-style:normal;color:var(--cy)}
-.sub{color:var(--dim);margin-top:10px;font-size:15px;max-width:560px;margin-left:auto;margin-right:auto}
+.sub{color:var(--dim);margin-top:8px;font-size:15px;max-width:540px;margin-left:auto;margin-right:auto}
 .sub b{color:var(--txt)}
 
-.card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:18px 20px;margin-top:20px}
-.card h2{font-size:12.5px;letter-spacing:2.5px;color:var(--dim);font-weight:600;margin-bottom:4px}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:17px 19px;margin-top:18px}
+.card h2{font-size:12.5px;letter-spacing:2.5px;color:var(--dim);font-weight:600;margin-bottom:3px}
+.card h2 i{font-style:normal;color:#39465f;letter-spacing:0}
 .card .why{color:var(--dim);font-size:13.5px;margin-bottom:12px}
 .card .why b{color:var(--txt)}
 
-/* toggle chips */
 .tray{display:flex;flex-wrap:wrap;gap:9px}
-.chip{padding:9px 14px;border-radius:10px;background:var(--chip);border:1.5px solid var(--edge);
-  font-size:14px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:9px;transition:.15s;color:var(--txt)}
+.chip{padding:10px 15px;border-radius:11px;background:var(--chip);border:1.5px solid var(--edge);
+  font-size:14.5px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:10px;transition:.15s}
 .chip .led{width:9px;height:9px;border-radius:50%;background:#3a4763;transition:.15s;flex:none}
 .chip.on{border-color:var(--cy)}
 .chip.on .led{background:var(--cy);box-shadow:0 0 8px var(--cy)}
 .chip.mem.on{border-color:var(--vio)}
 .chip.mem.on .led{background:var(--vio);box-shadow:0 0 8px var(--vio)}
-.chip.off{opacity:.5}
-.chip.learned{border-color:var(--grn);animation:pop .5s}
+.chip.off{opacity:.45}
+.chip.learned{border-color:var(--grn)}
 .chip.learned .led{background:var(--grn);box-shadow:0 0 8px var(--grn)}
-@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1)}}
 
-/* scenarios */
-.scen{display:flex;flex-wrap:wrap;gap:10px}
-.scen-btn{flex:1 1 220px;text-align:left;padding:13px 15px;border-radius:11px;border:1.5px solid var(--edge);
-  background:var(--chip);color:var(--txt);cursor:pointer;font-size:14.5px;transition:.15s}
-.scen-btn.on{border-color:var(--grn);box-shadow:0 0 14px #4ade8026;background:#101e16}
+.ask{display:flex;align-items:center;gap:12px;background:var(--chip);border:1.5px solid var(--edge);
+  border-radius:12px;padding:13px 16px;font-size:15.5px}
+.ask .bub{font-size:22px}
 
-/* flow */
-.flow{display:flex;align-items:center;gap:0;margin:6px 0 2px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}
-.fnode{flex:1;min-width:86px;text-align:center;padding:13px 6px;border-radius:12px;background:var(--chip);
+.flow{display:flex;align-items:center;margin:4px 0 0;overflow-x:auto;padding-bottom:6px}
+.fnode{flex:1;min-width:80px;text-align:center;padding:12px 4px;border-radius:12px;background:var(--chip);
   border:1.5px solid var(--edge);transition:.25s}
-.fnode .ic{font-size:22px;display:block;margin-bottom:3px;filter:grayscale(.7);transition:.25s}
-.fnode .nm{font-size:10px;letter-spacing:1.2px;color:var(--dim)}
-.fnode.lit{border-color:var(--cy);box-shadow:0 0 16px #4cc9f04d;background:#0e2130}
+.fnode .ic{font-size:21px;display:block;margin-bottom:2px;filter:grayscale(.7);transition:.25s}
+.fnode .nm{font-size:9.5px;letter-spacing:1.1px;color:var(--dim)}
+.fnode.lit{border-color:var(--cy);box-shadow:0 0 15px #4cc9f04d;background:#0e2130}
 .fnode.lit .ic{filter:none}.fnode.lit .nm{color:var(--cy)}
-.fnode.bad{border-color:var(--red);box-shadow:0 0 16px #f8717155;background:#2b1014}
-.fnode.bad .nm{color:var(--red)}
-.fnode.hold{border-color:var(--amb);box-shadow:0 0 16px #fbbf2444;background:#2b220e}
-.fnode.hold .nm{color:var(--amb)}
-.arrow{width:26px;flex:none;text-align:center;color:#33405f;font-size:16px;transition:.2s}
+.arrow{width:22px;flex:none;text-align:center;color:#33405f;font-size:15px;transition:.2s}
 .arrow.lit{color:var(--cy);text-shadow:0 0 8px var(--cy)}
-.loop{color:var(--dim);font-size:12px;text-align:center;margin-top:4px;transition:.2s}
+.loop{color:var(--dim);font-size:12px;text-align:center;margin-top:5px;transition:.2s}
 .loop.lit{color:var(--grn)}
 
-/* run + console */
 .runrow{display:flex;gap:12px;margin-top:14px}
-#run{padding:13px 40px;border-radius:12px;border:1.5px solid #2c584a;font-size:16px;letter-spacing:2px;cursor:pointer;
+#run{padding:13px 42px;border-radius:12px;border:1.5px solid #2c584a;font-size:16px;letter-spacing:2px;cursor:pointer;
   background:linear-gradient(180deg,#1a3d2c,#0f2418);color:var(--grn);font-weight:700}
 #run:disabled{opacity:.4}
 #reset{padding:13px 18px;border-radius:12px;border:1.5px solid var(--edge);background:transparent;color:var(--dim);cursor:pointer;font-size:13px}
-.console{margin-top:14px;background:#070b13;border:1px solid var(--edge);border-radius:12px;padding:15px 17px;
-  font:13.5px/1.8 Consolas,ui-monospace,monospace;min-height:110px;white-space:pre-wrap}
+
+.console{margin-top:14px;background:#070b13;border:1px solid var(--edge);border-radius:12px;padding:14px 16px;
+  font:13px/1.85 Consolas,ui-monospace,monospace;min-height:100px;white-space:pre-wrap}
 .console .c{color:var(--cy)} .console .g{color:var(--grn)} .console .a{color:var(--amb)}
 .console .r{color:var(--red)} .console .v{color:var(--vio)} .console .d{color:var(--dim)}
-.result{margin-top:14px;border-radius:12px;padding:16px 18px;font-size:15px;display:none;border:1.5px solid}
-.result.good{display:block;background:#0d2418;border-color:#2c584a}
-.result.held{display:block;background:#241c0d;border-color:#5a4526}
-.result.bad{display:block;background:#240d12;border-color:#5a2630}
-.result b{display:block;margin-bottom:5px;letter-spacing:.5px}
-.result.good b{color:var(--grn)}.result.held b{color:var(--amb)}.result.bad b{color:var(--red)}
-.result span{color:var(--txt);font-size:14.5px}
 
-.learn{margin-top:28px}
-.learn h3{font-size:13px;letter-spacing:2px;color:var(--cy);margin-bottom:10px}
-.learn p{color:var(--dim);font-size:14.5px;margin-bottom:12px}
-.learn p b{color:var(--txt)}
-.foot{text-align:center;color:#39465f;font-size:12.5px;margin-top:36px}
+.stage{margin-top:14px;background:#070b13;border:1.5px solid var(--edge);border-radius:14px;padding:22px 18px;min-height:120px;display:none}
+.stage.show{display:block}
+.stage .lbl{font-size:11px;letter-spacing:2px;color:var(--dim);margin-bottom:14px}
+.shapes{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;min-height:64px}
+.shp{position:relative;display:inline-block;animation:drop .45s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes drop{from{transform:translateY(-26px);opacity:0}to{transform:none;opacity:1}}
+.shp .star{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:12px}
+.binrow{margin-top:16px;padding-top:12px;border-top:1px dashed #223052;display:none}
+.binrow.show{display:block}
+.binrow .lbl2{font-size:11px;letter-spacing:2px;color:#55637d;margin-bottom:8px}
+.bin{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;opacity:.35;filter:grayscale(.7)}
+.bin .shp{animation:none}
+.empty{color:var(--amb);font-size:14px}
+
+.learnbox{margin-top:26px}
+.learnbox h3{font-size:13px;letter-spacing:2px;color:var(--cy);margin-bottom:10px}
+.learnbox p{color:var(--dim);font-size:14.5px;margin-bottom:11px}
+.learnbox p b{color:var(--txt)}
+.foot{text-align:center;color:#39465f;font-size:12.5px;margin-top:34px}
 </style>
 </head>
 <body>
@@ -93,81 +92,81 @@ h1 em{font-style:normal;color:var(--cy)}
 
 <header>
   <h1>HOW <em>CLAUDE</em> WORKS</h1>
-  <div class="sub">A little machine you can play with. Meet <b>Maya</b> — she runs a print-on-demand store and uses Claude for ideas and busywork. <b>Flip switches, press RUN</b>, and watch how the same question comes out completely different.</div>
+  <div class="sub">Just colors and shapes — so you can watch the <b>machinery</b>, not the content. Flip the switches, press RUN, see what changes.</div>
 </header>
 
 <div class="card">
-  <h2>① THE INSTRUCTIONS FILE <span style="color:#39465f">— "CLAUDE.md"</span></h2>
-  <div class="why">A small file Maya wrote <b>once</b>. Claude re-reads it at the start of <b>every single chat</b> — it's how Claude knows who it's working for. Tap to turn lines on/off:</div>
+  <h2>① THE RULES <i>— a file Claude reads before EVERY job ("CLAUDE.md")</i></h2>
+  <div class="why">You wrote these once. Claude obeys whatever is switched on — every time, without being reminded.</div>
   <div class="tray" id="ruleTray"></div>
 </div>
 
 <div class="card">
-  <h2>② MEMORY <span style="color:#39465f">— what Claude has learned along the way</span></h2>
-  <div class="why">Little notes Claude wrote <b>itself</b> after past chats. It doesn't read them all — it <b>searches</b> for the ones that matter right now. Tap to turn on/off:</div>
+  <h2>② MEMORY <i>— notes Claude wrote for itself after past jobs</i></h2>
+  <div class="why">Nobody typed these. Claude learned them, and checks them when they're relevant.</div>
   <div class="tray" id="memTray"></div>
 </div>
 
 <div class="card">
-  <h2>③ MAYA ASKS…</h2>
-  <div class="scen">
-    <button class="scen-btn on" data-s="0">🎨 "Got any cool ideas for new designs?"</button>
-    <button class="scen-btn" data-s="1">🛍 "Write the listing for the new tote and put it up"</button>
-    <button class="scen-btn" data-s="2">📦 "A customer says her mug arrived broken"</button>
-  </div>
+  <h2>③ YOUR ASK</h2>
+  <div class="ask"><span class="bub">💬</span><span>"Go to the <b>Shape Store</b>, get me a bunch of shapes, and show them to me nice."</span></div>
 </div>
 
 <div class="card">
-  <h2>④ THE MACHINERY</h2>
+  <h2>④ WATCH IT RUN</h2>
   <div class="flow">
-    <div class="fnode" id="n0"><span class="ic">💬</span><span class="nm">MAYA ASKS</span></div>
+    <div class="fnode" id="n0"><span class="ic">💬</span><span class="nm">YOUR ASK</span></div>
     <div class="arrow" id="a0">▶</div>
-    <div class="fnode" id="n1"><span class="ic">📜</span><span class="nm">READS INSTRUCTIONS</span></div>
+    <div class="fnode" id="n1"><span class="ic">📜</span><span class="nm">READS RULES</span></div>
     <div class="arrow" id="a1">▶</div>
-    <div class="fnode" id="n2"><span class="ic">🔎</span><span class="nm">SEARCHES MEMORY</span></div>
+    <div class="fnode" id="n2"><span class="ic">🔎</span><span class="nm">CHECKS MEMORY</span></div>
     <div class="arrow" id="a2">▶</div>
-    <div class="fnode" id="n3"><span class="ic">⚙️</span><span class="nm">DOES THE WORK</span></div>
+    <div class="fnode" id="n3"><span class="ic">🏪</span><span class="nm">SHAPE STORE (API)</span></div>
     <div class="arrow" id="a3">▶</div>
-    <div class="fnode" id="n4"><span class="ic">✅</span><span class="nm">ANSWER</span></div>
+    <div class="fnode" id="n4"><span class="ic">🖼</span><span class="nm">SHOWS YOU</span></div>
   </div>
-  <div class="loop" id="loop">⟲ …and if it learned something, it writes a <b>new memory</b> for next time</div>
+  <div class="loop" id="loop">⟲ …then writes down anything it learned, for next time</div>
   <div class="runrow">
     <button id="run">▶ RUN</button>
     <button id="reset">reset</button>
   </div>
-  <div class="console" id="con"><span class="d">Claude's inner monologue will appear here…</span></div>
-  <div class="result" id="res"></div>
+  <div class="console" id="con"><span class="d">Claude's thinking will appear here…</span></div>
+  <div class="stage" id="stage">
+    <div class="lbl">WHAT CLAUDE SHOWS YOU</div>
+    <div class="shapes" id="out"></div>
+    <div class="binrow" id="binrow"><div class="lbl2">🗑 THROWN OUT BY YOUR RULES</div><div class="bin" id="bin"></div></div>
+  </div>
 </div>
 
-<div class="card learn">
-  <h3>WHAT YOU JUST SAW</h3>
-  <p><b>The instructions file is the personality.</b> It's just a text file — who you are, what you sell, your taste, your hard rules. Claude reads it every chat, so you never repeat yourself. Turn OFF "my brand is minimalist nature" and ask for ideas: you get generic mush. That's the whole trick — most of "wow, my AI gets me" is a good instructions file.</p>
-  <p><b>Memory is earned, not written.</b> Claude keeps its own notes: what sold, what flopped, which supplier breaks mugs. New chats start smart because old chats wrote things down. Turn OFF "sunflowers flopped twice" and watch Claude cheerfully suggest sunflowers again — an AI without memory repeats every mistake forever.</p>
-  <p><b>Rules are seatbelts.</b> "Nothing goes public without my OK" turns a robot that <i>acts</i> into a robot that <i>prepares</i> — it does 95% of the work and holds the last 5% for a human eye. Run the listing scenario with that rule off to see why the seatbelt exists.</p>
-  <p><b>Claude searches memory — it doesn't read the whole diary.</b> With hundreds of notes, reading everything every time would be slow and expensive. So memory is organized like a book: an index up front, chapters behind it. A question about mugs opens the supplier chapter — and never touches the design notes.</p>
+<div class="card learnbox">
+  <h3>THE WHOLE TRICK, IN FOUR LINES</h3>
+  <p><b>Rules shape everything, silently.</b> The store sent the same kind of stuff every run — YOUR switches decided what survived. Turn "never red" off and red floods back. You never re-typed anything: the rules file does the reminding.</p>
+  <p><b>Memory saves wasted trips.</b> With the triangle note ON, Claude didn't even ask for triangles. With it OFF, watch the console: it orders them, the store says OUT OF STOCK, and it has to call again. Same store, dumber shopper.</p>
+  <p><b>The store is an "API."</b> Claude can't invent shapes — it goes OUT to get real ones (a store, a weather service, your sales numbers) and then arranges what came back the way your rules say.</p>
+  <p><b>It writes down what it learns.</b> Every run can add a note. That's the loop that makes it smarter next week than it was today — swap "shapes" for anything real and it's the same machine.</p>
 </div>
 
-<div class="foot">a teaching toy · everything here is a simplified simulation of a real Claude setup</div>
+<div class="foot">a teaching toy · a simplified simulation of a real Claude setup</div>
 </div>
 
 <script>
 const RULES=[
-  {id:"r_brand", txt:"🌿 My brand: minimalist line-art nature designs", on:true},
-  {id:"r_ok",    txt:"✋ Nothing goes public without my OK", on:true},
-  {id:"r_tone",  txt:"✍️ Listings: short, warm, no hype-speak", on:true},
+  {id:"r_red",  txt:"🚫 Never use RED", on:true},
+  {id:"r_sq",   txt:"⬛ SQUARES only", on:false},
+  {id:"r_max",  txt:"🖐 Never show more than 5", on:true},
+  {id:"r_sort", txt:"📏 Line them up big → small", on:true},
 ];
 const MEMS=[
-  {id:"m_fern", txt:"⭐ The fern tote is the bestseller", on:true},
-  {id:"m_sun",  txt:"📉 Sunflower designs flopped — twice", on:true},
-  {id:"m_supp", txt:"📦 Mugs from Supplier X often arrive broken", on:true},
-  {id:"m_boho", txt:"🔎 Buyers search “boho” way more than “minimalist”", on:false},
+  {id:"m_blue", txt:"💙 Blue is the favorite — put blue first", on:true},
+  {id:"m_tri",  txt:"📐 Store's triangle bin has been empty all week", on:true},
 ];
-let scenario=0, running=false;
+const COLORS={red:"#f0564c",blue:"#4c8df0",green:"#43c96b",yellow:"#f0c93c"};
 const on=new Set([...RULES.filter(r=>r.on),...MEMS.filter(m=>m.on)].map(x=>x.id));
+let running=false;
 const $=s=>document.querySelector(s);
 
 function chipEl(o,cls){const d=document.createElement("div");
-  d.className="chip "+cls+(on.has(o.id)?" on":" off");d.id=o.id;
+  d.className="chip "+cls+(on.has(o.id)?" on":" off");
   d.innerHTML='<span class="led"></span>'+o.txt;
   d.addEventListener("click",()=>{if(on.has(o.id)){on.delete(o.id);d.className="chip "+cls+" off";}
     else{on.add(o.id);d.className="chip "+cls+" on";}});
@@ -175,93 +174,109 @@ function chipEl(o,cls){const d=document.createElement("div");
 RULES.forEach(r=>$("#ruleTray").appendChild(chipEl(r,"rule")));
 MEMS.forEach(m=>$("#memTray").appendChild(chipEl(m,"mem")));
 
-document.querySelectorAll(".scen-btn").forEach(b=>b.addEventListener("click",()=>{
-  document.querySelectorAll(".scen-btn").forEach(x=>x.classList.remove("on"));
-  b.classList.add("on");scenario=+b.dataset.s;}));
-
 const con=$("#con");
-function say(html){return new Promise(res=>{const d=document.createElement("div");d.innerHTML=html;
-  con.appendChild(d);con.scrollTop=con.scrollHeight;setTimeout(res,600);});}
-function setN(i,cls){const n=$("#n"+i);n.classList.remove("lit","bad","hold");if(cls)n.classList.add(cls);}
-function resetBoard(){for(let i=0;i<5;i++)setN(i,null);
+function say(html,ms){return new Promise(res=>{const d=document.createElement("div");d.innerHTML=html;
+  con.appendChild(d);con.scrollTop=con.scrollHeight;setTimeout(res,ms||620);});}
+function setN(i){$("#n"+i).classList.add("lit");if(i>0)$("#a"+(i-1)).classList.add("lit");}
+function resetBoard(){for(let i=0;i<5;i++)$("#n"+i).classList.remove("lit");
   document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("lit"));
-  $("#loop").classList.remove("lit");$("#res").className="result";}
-async function step(i,cls){if(i>0)$("#a"+(i-1)).classList.add("lit");setN(i,cls||"lit");await new Promise(r=>setTimeout(r,430));}
-function result(kind,title,body){const r=$("#res");r.className="result "+kind;
-  r.innerHTML="<b>"+title+"</b><span>"+body+"</span>";}
-function learn(txt){$("#loop").classList.add("lit");
-  const c=document.createElement("div");c.className="chip mem learned";c.innerHTML='<span class="led"></span>✨ '+txt;
-  c.addEventListener("click",()=>c.classList.toggle("off"));$("#memTray").appendChild(c);}
+  $("#loop").classList.remove("lit");$("#stage").classList.remove("show");
+  $("#binrow").classList.remove("show");$("#out").innerHTML="";$("#bin").innerHTML="";}
+async function step(i){setN(i);await new Promise(r=>setTimeout(r,420));}
+
+function shapeSVG(s,small){
+  const px=small?Math.max(16,s.size*.55):s.size, c=COLORS[s.color];
+  let inner;
+  if(s.kind==="circle")inner='<circle cx="50" cy="50" r="46" fill="'+c+'"/>';
+  else if(s.kind==="square")inner='<rect x="6" y="6" width="88" height="88" rx="10" fill="'+c+'"/>';
+  else inner='<polygon points="50,5 96,92 4,92" fill="'+c+'"/>';
+  return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 100 100">'+inner+'</svg>';}
+function emo(s){return {circle:"⚪",square:"🟦",triangle:"🔺"}[s.kind];}
+
+function storeBatch(n,allowTri){
+  const kinds=allowTri?["circle","square","triangle"]:["circle","square"];
+  const cols=Object.keys(COLORS), out=[];
+  for(let i=0;i<n;i++){out.push({
+    kind:kinds[Math.floor(Math.random()*kinds.length)],
+    color:cols[Math.floor(Math.random()*cols.length)],
+    size:28+Math.floor(Math.random()*40)});}
+  return out;}
 
 async function run(){
-  if(running)return;running=true;$("#run").disabled=true;resetBoard();con.innerHTML="";
+  if(running)return;running=true;$("#run").disabled=true;
+  resetBoard();con.innerHTML="";
   const has=id=>on.has(id);
-  const q=["got any cool ideas for new designs?","write the listing for the new tote and put it up","a customer says her mug arrived broken"][scenario];
 
-  await step(0);await say('<span class="c">▸ Maya:</span> "'+q+'"');
+  await step(0);await say('<span class="c">▸ you:</span> "get me a bunch of shapes, show them nice"');
   await step(1);
-  await say('<span class="c">▸ reads the instructions file…</span> <span class="d">'+
-    (has("r_brand")||has("r_ok")||has("r_tone")?"knows who it\'s working for.":"it\'s EMPTY — Claude knows nothing about Maya.")+'</span>');
-
-  if(scenario===0){ /* design ideas */
-    await step(2);
-    if(has("m_sun"))await say('<span class="v">▸ memory hit:</span> "sunflowers flopped — twice." Crosses sunflowers off before suggesting them AGAIN.');
-    if(has("m_fern"))await say('<span class="v">▸ memory hit:</span> "the fern tote is the bestseller." Leans into what already works.');
-    if(!has("m_sun")&&!has("m_fern"))await say('<span class="d">▸ memory search: nothing found — starting from zero, like a stranger would.</span>');
-    await step(3);
-    let ideas, verdict;
-    if(has("r_brand")&&has("m_fern")){ideas='a fern-and-moss series, a single-line mountain ridge, pressed-leaf minimal prints';verdict="good";}
-    else if(has("r_brand")){ideas='a single-line mountain ridge, a wildflower stem set, tide-line waves';verdict="good";}
-    else{ideas='neon gamer skulls, inspirational quotes in cursive, a random cat meme'+(has("m_sun")?'':', sunflowers (again)');verdict="held";}
-    await say('<span class="c">▸ drafts ideas:</span> '+ideas);
-    await step(4,verdict==="good"?"lit":"hold");
-    if(verdict==="good")result("good","✅ ON-BRAND, FIRST TRY","The ideas sound like MAYA because the instructions file told Claude who she is, and memory told it what already worked. Zero back-and-forth.");
-    else result("held","😕 TECHNICALLY IDEAS…","Generic mush — nothing to do with her store. Claude isn\'t dumb here; it\'s BLIND. Turn the brand line back on and run it again.");
-    if(verdict==="good"){learn("Maya loved the fern-and-moss series idea");await say('<span class="g">▸ writes a memory:</span> "Maya loved the fern-and-moss idea" — next chat starts even smarter.');}
-    finish();return;
-  }
-
-  if(scenario===1){ /* listing */
-    await step(2);
-    if(has("m_boho"))await say('<span class="v">▸ memory hit:</span> "buyers search BOHO more than minimalist" — works the word in for search.');
-    else await say('<span class="d">▸ memory search: no keyword notes found.</span>');
-    await step(3);
-    await say('<span class="c">▸ writes the listing…</span> '+(has("r_tone")?'short and warm, like the instructions say.':'long, hype-y, "🔥 MUST-HAVE!!" — nobody told it not to.'));
-    if(has("r_ok")){
-      await step(4,"hold");
-      result("held","⏸ DONE — BUT WAITING FOR MAYA","The listing is written, priced, tagged… and parked in a drafts tray with a one-tap publish button. The rule turned \"a robot that acts\" into \"a robot that prepares.\" The last 5% — the taste call — stays human.");
-      await say('<span class="a">▸ RULE: "nothing goes public without my OK" — holds the draft for approval.</span>');
-    }else{
-      await step(4,"bad");
-      result("bad","💥 PUBLISHED — WITH A $1.99 TYPO","It went straight to the live store and priced a $21.99 tote at $1.99. Six sold before Maya saw it. Machines don\'t feel the \"wait—\" moment; approval rules exist because taste and sanity-checks can\'t be automated — only queued.");
-      learn("always hold listings for Maya\'s OK");
-      await say('<span class="g">▸ writes a memory:</span> "always hold listings for approval" — the burn becomes a rule.');
-    }
-    finish();return;
-  }
-
-  /* scenario 2 — broken mug */
+  const active=RULES.filter(r=>has(r.id)).map(r=>r.txt.replace(/^..\s/,""));
+  await say('<span class="c">▸ reads the rules file:</span> '+(active.length?active.join(" · "):'<span class="d">empty — anything goes</span>'));
   await step(2);
-  if(has("m_supp"))await say('<span class="v">▸ memory hit:</span> "mugs from Supplier X often arrive broken." So this isn\'t bad luck — it\'s a PATTERN.');
-  else await say('<span class="d">▸ memory search: nothing on mugs — treats it as a one-off.</span>');
+  if(has("m_tri"))await say('<span class="v">▸ memory:</span> "triangle bin is empty" — won’t waste a trip asking for triangles.');
+  if(has("m_blue"))await say('<span class="v">▸ memory:</span> "blue is the favorite" — will put blue up front.');
+  if(!has("m_tri")&&!has("m_blue"))await say('<span class="d">▸ memory: nothing useful found.</span>');
+
   await step(3);
-  if(has("m_supp")){
-    await say('<span class="c">▸ drafts:</span> instant replacement + apology for the customer, AND flags the real fix: "third broken mug from Supplier X — switch mugs to Supplier Y?"');
-    await step(4,"lit");
-    result("good","✅ FIXED THE CUSTOMER — AND THE CAUSE","Without memory this is an apology template. With memory it\'s a diagnosis: the third break is a supplier problem, not shipping luck. That jump — from answering the question to spotting the pattern — is what accumulated memory buys.");
-    learn("switched mugs to Supplier Y");
-    await say('<span class="g">▸ writes a memory:</span> "switched mugs to Supplier Y" — the problem can\'t quietly repeat.');
+  let batch=[];
+  if(has("m_tri")){
+    await say('<span class="a">▸ → SHAPE STORE:</span> "8 shapes please — <b>no triangles</b>"');
+    batch=storeBatch(8,false);
+    await say('<span class="a">▸ ← store sends:</span> '+batch.map(emo).join(" "));
   }else{
-    await say('<span class="c">▸ drafts:</span> a polite apology and a replacement mug. Case closed.');
-    await step(4,"hold");
-    result("held","🤷 HANDLED… AND DOOMED TO REPEAT","Perfectly fine customer service — and the fourth broken mug is already in the mail, because nobody\'s counting. Flip the supplier memory ON and run it again: same complaint, completely different intelligence.");
+    await say('<span class="a">▸ → SHAPE STORE:</span> "8 shapes please"');
+    batch=storeBatch(8,true);
+    const tris=batch.filter(s=>s.kind==="triangle").length;
+    if(tris>0){
+      const kept=batch.filter(s=>s.kind!=="triangle");
+      await say('<span class="a">▸ ← store sends:</span> '+kept.map(emo).join(" ")+' <span class="r">+ '+tris+' triangle'+(tris>1?"s":"")+' — OUT OF STOCK (again)</span>');
+      await say('<span class="a">▸ → SHAPE STORE:</span> "fine — '+tris+' more, no triangles" <span class="d">(a wasted second trip memory would have skipped)</span>');
+      batch=kept.concat(storeBatch(tris,false));
+      await say('<span class="a">▸ ← store sends:</span> '+batch.map(emo).join(" "));
+    }else{
+      await say('<span class="a">▸ ← store sends:</span> '+batch.map(emo).join(" ")+' <span class="d">(got lucky — no triangles in the batch)</span>');
+    }
   }
-  finish();
+
+  /* apply rules */
+  let kept=batch.slice(), binned=[];
+  if(has("r_red")){const cut=kept.filter(s=>s.color==="red");kept=kept.filter(s=>s.color!=="red");
+    if(cut.length){binned.push(...cut);await say('<span class="r">▸ rule "never red":</span> threw out '+cut.length+'.');}}
+  if(has("r_sq")){const cut=kept.filter(s=>s.kind!=="square");kept=kept.filter(s=>s.kind==="square");
+    if(cut.length){binned.push(...cut);await say('<span class="r">▸ rule "squares only":</span> threw out '+cut.length+'.');}}
+  if(has("r_max")&&kept.length>5){const cut=kept.slice(5);kept=kept.slice(0,5);binned.push(...cut);
+    await say('<span class="r">▸ rule "max 5":</span> kept the first 5, binned '+cut.length+'.');}
+  if(has("r_sort")){kept.sort((a,b)=>b.size-a.size);await say('<span class="c">▸ rule "big → small":</span> lined up by size.');}
+  if(has("m_blue")&&!has("r_sort")){kept.sort((a,b)=>(a.color==="blue"?-1:0)-(b.color==="blue"?-1:0));}
+
+  await step(4);
+  const stage=$("#stage");stage.classList.add("show");
+  const out=$("#out");
+  if(kept.length===0){
+    out.innerHTML='<div class="empty">…nothing survived your rules. Claude would go back to the store — or tell you your rules ate everything. 🤷</div>';
+  }else{
+    kept.forEach((s,i)=>{const d=document.createElement("div");d.className="shp";d.style.animationDelay=(i*0.09)+"s";
+      d.innerHTML=(has("m_blue")&&s.color==="blue"?'<span class="star">⭐</span>':"")+shapeSVG(s,false);
+      out.appendChild(d);});
+  }
+  if(binned.length){$("#binrow").classList.add("show");
+    binned.forEach(s=>{const d=document.createElement("div");d.className="shp";d.innerHTML=shapeSVG(s,true);$("#bin").appendChild(d);});}
+  await say('<span class="g">▸ shows you '+kept.length+' shape'+(kept.length===1?"":"s")+', arranged your way.</span>');
+
+  /* learn */
+  $("#loop").classList.add("lit");
+  if(!has("m_tri")&&batch.length){
+    const c=document.createElement("div");c.className="chip mem learned";
+    c.innerHTML='<span class="led"></span>✨ Store keeps running out of triangles';
+    c.addEventListener("click",()=>c.classList.toggle("off"));$("#memTray").appendChild(c);
+    await say('<span class="g">▸ writes a note:</span> "store keeps running out of triangles" — next run starts smarter.');
+  }else{
+    await say('<span class="g">▸ nothing new worth writing down this time.</span>');
+  }
+  running=false;$("#run").disabled=false;
 }
-function finish(){running=false;$("#run").disabled=false;}
 $("#run").addEventListener("click",run);
 $("#reset").addEventListener("click",()=>{resetBoard();
-  con.innerHTML='<span class="d">Claude\'s inner monologue will appear here…</span>';
+  con.innerHTML='<span class="d">Claude’s thinking will appear here…</span>';
   document.querySelectorAll(".chip.learned").forEach(c=>c.remove());});
 </script>
 </body>
