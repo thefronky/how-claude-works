@@ -3,27 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How Claude Works — shapes &amp; colors</title>
+<title>How Claude Works — the Shape Store</title>
 <style>
 :root{
   --bg:#0a0c12; --panel:#10141f; --edge:#232b3f; --txt:#e4ebf5; --dim:#8b98ad;
-  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --vio:#a78bfa; --red:#f87171;
+  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --vio:#a78bfa; --red:#f87171; --gold:#f5c542;
   --chip:#171d2d;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--txt);font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
 body{padding-bottom:70px}
-.wrap{max-width:780px;margin:0 auto;padding:0 16px}
+.wrap{max-width:800px;margin:0 auto;padding:0 16px}
 
-header{padding:38px 0 6px;text-align:center}
-h1{font-size:clamp(23px,5vw,32px);font-weight:700;letter-spacing:1px}
+header{padding:36px 0 4px;text-align:center}
+h1{font-size:clamp(22px,5vw,31px);font-weight:700;letter-spacing:1px}
 h1 em{font-style:normal;color:var(--cy)}
-.sub{color:var(--dim);margin-top:8px;font-size:15px;max-width:540px;margin-left:auto;margin-right:auto}
+.sub{color:var(--dim);margin-top:8px;font-size:15px;max-width:560px;margin-left:auto;margin-right:auto}
 .sub b{color:var(--txt)}
+.watchfirst{margin:16px auto 0;max-width:560px;background:#151022;border:1px solid #3a2f5a;border-radius:12px;
+  padding:11px 15px;font-size:13.5px;color:var(--dim);text-align:center}
+.watchfirst a{color:var(--vio)}
 
 .card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:17px 19px;margin-top:18px}
 .card h2{font-size:12.5px;letter-spacing:2.5px;color:var(--dim);font-weight:600;margin-bottom:3px}
-.card h2 i{font-style:normal;color:#39465f;letter-spacing:0}
+.card h2 i{font-style:normal;color:#39465f;letter-spacing:0;text-transform:none}
 .card .why{color:var(--dim);font-size:13.5px;margin-bottom:12px}
 .card .why b{color:var(--txt)}
 
@@ -39,18 +42,37 @@ h1 em{font-style:normal;color:var(--cy)}
 .chip.learned{border-color:var(--grn)}
 .chip.learned .led{background:var(--grn);box-shadow:0 0 8px var(--grn)}
 
+/* board */
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.board{grid-template-columns:1fr}}
+.bcol{background:#0c1019;border:1px solid var(--edge);border-radius:12px;padding:12px 14px;min-height:92px}
+.bcol h3{font-size:11px;letter-spacing:2px;color:var(--dim);margin-bottom:9px}
+.bcol .none{color:#44557a;font-size:13px}
+.q{background:#241c0d;border:1.5px solid #5a4526;border-radius:11px;padding:12px 13px;font-size:14px;animation:qpulse 1.4s infinite}
+@keyframes qpulse{50%{border-color:var(--amb)}}
+.q .qt{margin-bottom:10px}
+.q button{padding:8px 20px;border-radius:9px;border:1.5px solid var(--edge);background:var(--chip);color:var(--txt);
+  cursor:pointer;font-size:14px;margin-right:8px}
+.q button.yes{border-color:#2c584a;color:var(--grn)}
+.q button.no{border-color:#5a2630;color:var(--red)}
+.blog{font-size:12.5px;color:var(--dim);line-height:1.75}
+.blog .who{color:var(--cy)}
+.blog .dec{color:var(--amb)}
+
 .ask{display:flex;align-items:center;gap:12px;background:var(--chip);border:1.5px solid var(--edge);
   border-radius:12px;padding:13px 16px;font-size:15.5px}
 .ask .bub{font-size:22px}
 
 .flow{display:flex;align-items:center;margin:4px 0 0;overflow-x:auto;padding-bottom:6px}
-.fnode{flex:1;min-width:80px;text-align:center;padding:12px 4px;border-radius:12px;background:var(--chip);
+.fnode{flex:1;min-width:76px;text-align:center;padding:12px 4px;border-radius:12px;background:var(--chip);
   border:1.5px solid var(--edge);transition:.25s}
-.fnode .ic{font-size:21px;display:block;margin-bottom:2px;filter:grayscale(.7);transition:.25s}
-.fnode .nm{font-size:9.5px;letter-spacing:1.1px;color:var(--dim)}
+.fnode .ic{font-size:20px;display:block;margin-bottom:2px;filter:grayscale(.7);transition:.25s}
+.fnode .nm{font-size:9.5px;letter-spacing:1px;color:var(--dim)}
 .fnode.lit{border-color:var(--cy);box-shadow:0 0 15px #4cc9f04d;background:#0e2130}
 .fnode.lit .ic{filter:none}.fnode.lit .nm{color:var(--cy)}
-.arrow{width:22px;flex:none;text-align:center;color:#33405f;font-size:15px;transition:.2s}
+.fnode.hold{border-color:var(--amb);box-shadow:0 0 15px #fbbf2444;background:#2b2110}
+.fnode.hold .nm{color:var(--amb)}
+.arrow{width:20px;flex:none;text-align:center;color:#33405f;font-size:14px;transition:.2s}
 .arrow.lit{color:var(--cy);text-shadow:0 0 8px var(--cy)}
 .loop{color:var(--dim);font-size:12px;text-align:center;margin-top:5px;transition:.2s}
 .loop.lit{color:var(--grn)}
@@ -65,26 +87,40 @@ h1 em{font-style:normal;color:var(--cy)}
   font:13px/1.85 Consolas,ui-monospace,monospace;min-height:100px;white-space:pre-wrap}
 .console .c{color:var(--cy)} .console .g{color:var(--grn)} .console .a{color:var(--amb)}
 .console .r{color:var(--red)} .console .v{color:var(--vio)} .console .d{color:var(--dim)}
+.console .gold{color:var(--gold)}
 
-.stage{margin-top:14px;background:#070b13;border:1.5px solid var(--edge);border-radius:14px;padding:22px 18px;min-height:120px;display:none}
+/* VHS stage */
+.stage{position:relative;margin-top:14px;background:#101008;border:2px solid #2e2a1c;border-radius:10px;
+  padding:40px 18px 20px;min-height:150px;display:none;overflow:hidden;
+  box-shadow:inset 0 0 60px #000}
 .stage.show{display:block}
-.stage .lbl{font-size:11px;letter-spacing:2px;color:var(--dim);margin-bottom:14px}
-.shapes{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;min-height:64px}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,#00000030 2px 4px);
+  mix-blend-mode:multiply}
+.vhstop{position:absolute;top:10px;left:14px;right:14px;display:flex;justify-content:space-between;
+  font:12px "Courier New",monospace;color:#e8e0c8;text-shadow:0 0 6px #e8e0c880;letter-spacing:1px}
+.rec{color:#ff6a5c}.rec b{animation:blinkrec 1.1s infinite}
+@keyframes blinkrec{50%{opacity:.2}}
+.vhstitle{position:relative;text-align:center;font:13px "Courier New",monospace;color:#e8e0c8;
+  letter-spacing:2px;margin-bottom:16px;text-shadow:0 0 6px #e8e0c880}
+.shapes{position:relative;display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;min-height:64px;
+  filter:saturate(.85) sepia(.12)}
 .shp{position:relative;display:inline-block;animation:drop .45s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes drop{from{transform:translateY(-26px);opacity:0}to{transform:none;opacity:1}}
 .shp .star{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:12px}
-.binrow{margin-top:16px;padding-top:12px;border-top:1px dashed #223052;display:none}
+.binrow{position:relative;margin-top:16px;padding-top:12px;border-top:1px dashed #3a3520;display:none}
 .binrow.show{display:block}
-.binrow .lbl2{font-size:11px;letter-spacing:2px;color:#55637d;margin-bottom:8px}
+.binrow .lbl2{font:11px "Courier New",monospace;letter-spacing:2px;color:#8a8468;margin-bottom:8px}
 .bin{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;opacity:.35;filter:grayscale(.7)}
 .bin .shp{animation:none}
-.empty{color:var(--amb);font-size:14px}
+.empty{color:var(--amb);font-size:14px;position:relative}
 
 .learnbox{margin-top:26px}
 .learnbox h3{font-size:13px;letter-spacing:2px;color:var(--cy);margin-bottom:10px}
 .learnbox p{color:var(--dim);font-size:14.5px;margin-bottom:11px}
 .learnbox p b{color:var(--txt)}
 .foot{text-align:center;color:#39465f;font-size:12.5px;margin-top:34px}
+.foot a{color:#4b5b7a}
 </style>
 </head>
 <body>
@@ -92,61 +128,71 @@ h1 em{font-style:normal;color:var(--cy)}
 
 <header>
   <h1>HOW <em>CLAUDE</em> WORKS</h1>
-  <div class="sub">Just colors and shapes — so you can watch the <b>machinery</b>, not the content. Flip the switches, press RUN, see what changes.</div>
+  <div class="sub">Featuring <b>THE SHAPE STORE</b>. Just shapes and colors, so you can watch the <b>machinery</b> — flip switches, press RUN, see what changes.</div>
+  <div class="watchfirst">🎬 Haven't seen the Shape Store video? <a href="https://knowyourmeme.com/memes/the-shape-store-ai-video" target="_blank" rel="noopener">Watch the archived footage of the grand opening first</a> — then come back. We are proud to announce Claude now shops there.</div>
 </header>
 
 <div class="card">
-  <h2>① THE RULES <i>— a file Claude reads before EVERY job ("CLAUDE.md")</i></h2>
-  <div class="why">You wrote these once. Claude obeys whatever is switched on — every time, without being reminded.</div>
+  <h2>① CLAUDE.md <i>— the instructions file Claude reads before EVERY job</i></h2>
+  <div class="why">You write this once, in plain words. Claude re-reads it every single time — it never needs reminding.</div>
   <div class="tray" id="ruleTray"></div>
 </div>
 
 <div class="card">
-  <h2>② MEMORY <i>— notes Claude wrote for itself after past jobs</i></h2>
-  <div class="why">Nobody typed these. Claude learned them, and checks them when they're relevant.</div>
+  <h2>② MEMORY <i>— notes Claude wrote for itself after past trips</i></h2>
+  <div class="why">Nobody typed these. Claude learned them and checks the relevant ones before it acts.</div>
   <div class="tray" id="memTray"></div>
 </div>
 
 <div class="card">
-  <h2>③ YOUR ASK</h2>
-  <div class="ask"><span class="bub">💬</span><span>"Go to the <b>Shape Store</b>, get me a bunch of shapes, and show them to me nice."</span></div>
+  <h2>③ THE BOARD <i>— where Claude parks decisions only YOU can make</i></h2>
+  <div class="why">Claude doesn't guess on the big stuff — it posts a question here and <b>waits for your tap</b>. Your answer gets written down and obeyed forever after.</div>
+  <div class="board">
+    <div class="bcol"><h3>❓ QUESTIONS FOR YOU</h3><div id="qbox"><div class="none">nothing needs you right now</div></div></div>
+    <div class="bcol"><h3>📋 LOG</h3><div class="blog" id="blog"><div class="none">quiet so far</div></div></div>
+  </div>
 </div>
 
 <div class="card">
-  <h2>④ WATCH IT RUN</h2>
+  <h2>④ YOUR ASK</h2>
+  <div class="ask"><span class="bub">💬</span><span>"Go to the <b>Shape Store</b>, get me a bunch of shapes, and show them to me nice."</span></div>
   <div class="flow">
     <div class="fnode" id="n0"><span class="ic">💬</span><span class="nm">YOUR ASK</span></div>
     <div class="arrow" id="a0">▶</div>
-    <div class="fnode" id="n1"><span class="ic">📜</span><span class="nm">READS RULES</span></div>
+    <div class="fnode" id="n1"><span class="ic">📜</span><span class="nm">CLAUDE.md</span></div>
     <div class="arrow" id="a1">▶</div>
-    <div class="fnode" id="n2"><span class="ic">🔎</span><span class="nm">CHECKS MEMORY</span></div>
+    <div class="fnode" id="n2"><span class="ic">🔎</span><span class="nm">MEMORY</span></div>
     <div class="arrow" id="a2">▶</div>
     <div class="fnode" id="n3"><span class="ic">🏪</span><span class="nm">SHAPE STORE (API)</span></div>
     <div class="arrow" id="a3">▶</div>
-    <div class="fnode" id="n4"><span class="ic">🖼</span><span class="nm">SHOWS YOU</span></div>
+    <div class="fnode" id="n4"><span class="ic">📌</span><span class="nm">THE BOARD</span></div>
+    <div class="arrow" id="a4">▶</div>
+    <div class="fnode" id="n5"><span class="ic">🖼</span><span class="nm">SHOWS YOU</span></div>
   </div>
   <div class="loop" id="loop">⟲ …then writes down anything it learned, for next time</div>
   <div class="runrow">
     <button id="run">▶ RUN</button>
     <button id="reset">reset</button>
   </div>
-  <div class="console" id="con"><span class="d">Claude's thinking will appear here…</span></div>
+  <div class="console" id="con"><span class="d">Claude&#39;s thinking will appear here…</span></div>
   <div class="stage" id="stage">
-    <div class="lbl">WHAT CLAUDE SHOWS YOU</div>
+    <div class="vhstop"><span class="rec"><b>●</b> REC</span><span id="vhsdate">MAR 01 1996&nbsp;&nbsp;AM 10:04</span></div>
+    <div class="vhstitle">— ARCHIVED FOOTAGE · WHAT CLAUDE BROUGHT BACK —</div>
     <div class="shapes" id="out"></div>
-    <div class="binrow" id="binrow"><div class="lbl2">🗑 THROWN OUT BY YOUR RULES</div><div class="bin" id="bin"></div></div>
+    <div class="binrow" id="binrow"><div class="lbl2">🗑 THROWN OUT BY YOUR CLAUDE.md RULES</div><div class="bin" id="bin"></div></div>
   </div>
 </div>
 
 <div class="card learnbox">
-  <h3>THE WHOLE TRICK, IN FOUR LINES</h3>
-  <p><b>Rules shape everything, silently.</b> The store sent the same kind of stuff every run — YOUR switches decided what survived. Turn "never red" off and red floods back. You never re-typed anything: the rules file does the reminding.</p>
-  <p><b>Memory saves wasted trips.</b> With the triangle note ON, Claude didn't even ask for triangles. With it OFF, watch the console: it orders them, the store says OUT OF STOCK, and it has to call again. Same store, dumber shopper.</p>
-  <p><b>The store is an "API."</b> Claude can't invent shapes — it goes OUT to get real ones (a store, a weather service, your sales numbers) and then arranges what came back the way your rules say.</p>
-  <p><b>It writes down what it learns.</b> Every run can add a note. That's the loop that makes it smarter next week than it was today — swap "shapes" for anything real and it's the same machine.</p>
+  <h3>THE WHOLE TRICK, IN FIVE LINES</h3>
+  <p><b>CLAUDE.md shapes everything, silently.</b> The store sells what it sells — YOUR file decided what survived. Turn "never red" off and red floods back. You never re-typed a word.</p>
+  <p><b>Memory saves wasted trips.</b> With the triangle note ON, Claude doesn&#39;t even ask. With it OFF, watch the console: it orders triangles, the store says OUT OF STOCK, and it has to call again. Same store, dumber shopper.</p>
+  <p><b>The Board is where the human stays boss.</b> When the store offers the premium gold square, Claude doesn&#39;t decide — it posts the question and waits for your tap. Then your answer becomes a memory, and it never has to ask again. (In real setups, several Claudes work at once and share one board.)</p>
+  <p><b>The store is an "API."</b> Claude can&#39;t invent shapes — it goes OUT to get real things (a store, a weather service, your sales numbers) and arranges what came back the way your file says.</p>
+  <p><b>It writes down what it learns.</b> Every run can add a note. That&#39;s the loop that makes it smarter next week than today — swap "shapes" for anything real and it&#39;s the same machine.</p>
 </div>
 
-<div class="foot">a teaching toy · a simplified simulation of a real Claude setup</div>
+<div class="foot">a teaching toy · a simplified simulation of a real Claude setup · shapes courtesy of <a href="https://knowyourmeme.com/memes/the-shape-store-ai-video" target="_blank" rel="noopener">the grand opening</a></div>
 </div>
 
 <script>
@@ -158,11 +204,11 @@ const RULES=[
 ];
 const MEMS=[
   {id:"m_blue", txt:"💙 Blue is the favorite — put blue first", on:true},
-  {id:"m_tri",  txt:"📐 Store's triangle bin has been empty all week", on:true},
+  {id:"m_tri",  txt:"📐 Store&#39;s triangle bin has been empty all week", on:true},
 ];
-const COLORS={red:"#f0564c",blue:"#4c8df0",green:"#43c96b",yellow:"#f0c93c"};
+const COLORS={red:"#f0564c",blue:"#4c8df0",green:"#43c96b",yellow:"#f0c93c",gold:"#f5c542"};
 const on=new Set([...RULES.filter(r=>r.on),...MEMS.filter(m=>m.on)].map(x=>x.id));
-let running=false;
+let running=false, goldPolicy=null; // null = never asked; "yes"/"no" = board decision
 const $=s=>document.querySelector(s);
 
 function chipEl(o,cls){const d=document.createElement("div");
@@ -177,25 +223,38 @@ MEMS.forEach(m=>$("#memTray").appendChild(chipEl(m,"mem")));
 const con=$("#con");
 function say(html,ms){return new Promise(res=>{const d=document.createElement("div");d.innerHTML=html;
   con.appendChild(d);con.scrollTop=con.scrollHeight;setTimeout(res,ms||620);});}
-function setN(i){$("#n"+i).classList.add("lit");if(i>0)$("#a"+(i-1)).classList.add("lit");}
-function resetBoard(){for(let i=0;i<5;i++)$("#n"+i).classList.remove("lit");
+function setN(i,cls){$("#n"+i).classList.add(cls||"lit");if(i>0)$("#a"+(i-1)).classList.add("lit");}
+function resetBoardFlow(){for(let i=0;i<6;i++)$("#n"+i).classList.remove("lit","hold");
   document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("lit"));
   $("#loop").classList.remove("lit");$("#stage").classList.remove("show");
   $("#binrow").classList.remove("show");$("#out").innerHTML="";$("#bin").innerHTML="";}
-async function step(i){setN(i);await new Promise(r=>setTimeout(r,420));}
+async function step(i,cls){setN(i,cls);await new Promise(r=>setTimeout(r,420));}
+
+function blogAdd(html){const b=$("#blog");if(b.querySelector(".none"))b.innerHTML="";
+  const d=document.createElement("div");d.innerHTML=html;b.appendChild(d);}
+function askBoard(qtext){return new Promise(res=>{
+  const qb=$("#qbox");qb.innerHTML="";
+  const q=document.createElement("div");q.className="q";
+  q.innerHTML='<div class="qt">'+qtext+'</div>';
+  const y=document.createElement("button");y.className="yes";y.textContent="✓ Yes, get it";
+  const n=document.createElement("button");n.className="no";n.textContent="✗ No";
+  y.addEventListener("click",()=>{qb.innerHTML='<div class="none">nothing needs you right now</div>';res(true);});
+  n.addEventListener("click",()=>{qb.innerHTML='<div class="none">nothing needs you right now</div>';res(false);});
+  q.appendChild(y);q.appendChild(n);qb.appendChild(q);
+  q.scrollIntoView({behavior:"smooth",block:"center"});});}
 
 function shapeSVG(s,small){
-  const px=small?Math.max(16,s.size*.55):s.size, c=COLORS[s.color];
+  const px=small?Math.max(16,Math.round(s.size*.55)):s.size, c=COLORS[s.color];
   let inner;
   if(s.kind==="circle")inner='<circle cx="50" cy="50" r="46" fill="'+c+'"/>';
   else if(s.kind==="square")inner='<rect x="6" y="6" width="88" height="88" rx="10" fill="'+c+'"/>';
   else inner='<polygon points="50,5 96,92 4,92" fill="'+c+'"/>';
   return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 100 100">'+inner+'</svg>';}
-function emo(s){return {circle:"⚪",square:"🟦",triangle:"🔺"}[s.kind];}
+function emo(s){return s.color==="gold"?"🟨":{circle:"⚪",square:"🟦",triangle:"🔺"}[s.kind];}
 
 function storeBatch(n,allowTri){
   const kinds=allowTri?["circle","square","triangle"]:["circle","square"];
-  const cols=Object.keys(COLORS), out=[];
+  const cols=["red","blue","green","yellow"], out=[];
   for(let i=0;i<n;i++){out.push({
     kind:kinds[Math.floor(Math.random()*kinds.length)],
     color:cols[Math.floor(Math.random()*cols.length)],
@@ -204,79 +263,112 @@ function storeBatch(n,allowTri){
 
 async function run(){
   if(running)return;running=true;$("#run").disabled=true;
-  resetBoard();con.innerHTML="";
+  resetBoardFlow();con.innerHTML="";
   const has=id=>on.has(id);
 
   await step(0);await say('<span class="c">▸ you:</span> "get me a bunch of shapes, show them nice"');
   await step(1);
   const active=RULES.filter(r=>has(r.id)).map(r=>r.txt.replace(/^..\s/,""));
-  await say('<span class="c">▸ reads the rules file:</span> '+(active.length?active.join(" · "):'<span class="d">empty — anything goes</span>'));
+  await say('<span class="c">▸ reads CLAUDE.md:</span> '+(active.length?active.join(" · "):'<span class="d">empty — anything goes</span>'));
   await step(2);
-  if(has("m_tri"))await say('<span class="v">▸ memory:</span> "triangle bin is empty" — won’t waste a trip asking for triangles.');
+  if(has("m_tri"))await say('<span class="v">▸ memory:</span> "triangle bin is empty" — won&#39;t waste a trip asking for triangles.');
   if(has("m_blue"))await say('<span class="v">▸ memory:</span> "blue is the favorite" — will put blue up front.');
-  if(!has("m_tri")&&!has("m_blue"))await say('<span class="d">▸ memory: nothing useful found.</span>');
+  if(goldPolicy)await say('<span class="v">▸ memory:</span> board decision on gold squares: <b>'+(goldPolicy==="yes"?"always yes":"never")+'</b>.');
+  if(!has("m_tri")&&!has("m_blue")&&!goldPolicy)await say('<span class="d">▸ memory: nothing useful found.</span>');
 
   await step(3);
+  await say('<span class="a">▸ the doors open. WELCOME… TO THE SHAPE STORE.</span> <span class="d">(grand opening, every single day)</span>',700);
   let batch=[];
   if(has("m_tri")){
-    await say('<span class="a">▸ → SHAPE STORE:</span> "8 shapes please — <b>no triangles</b>"');
+    await say('<span class="a">▸ → STORE:</span> "8 shapes please — <b>no triangles</b>"');
     batch=storeBatch(8,false);
-    await say('<span class="a">▸ ← store sends:</span> '+batch.map(emo).join(" "));
+    await say('<span class="a">▸ ← STORE:</span> "WE HAVE SQUARES. WE HAVE CIRCLES." '+batch.map(emo).join(" "));
   }else{
-    await say('<span class="a">▸ → SHAPE STORE:</span> "8 shapes please"');
+    await say('<span class="a">▸ → STORE:</span> "8 shapes please"');
     batch=storeBatch(8,true);
     const tris=batch.filter(s=>s.kind==="triangle").length;
     if(tris>0){
-      const kept=batch.filter(s=>s.kind!=="triangle");
-      await say('<span class="a">▸ ← store sends:</span> '+kept.map(emo).join(" ")+' <span class="r">+ '+tris+' triangle'+(tris>1?"s":"")+' — OUT OF STOCK (again)</span>');
-      await say('<span class="a">▸ → SHAPE STORE:</span> "fine — '+tris+' more, no triangles" <span class="d">(a wasted second trip memory would have skipped)</span>');
-      batch=kept.concat(storeBatch(tris,false));
-      await say('<span class="a">▸ ← store sends:</span> '+batch.map(emo).join(" "));
+      const kept0=batch.filter(s=>s.kind!=="triangle");
+      await say('<span class="a">▸ ← STORE:</span> '+kept0.map(emo).join(" ")+' <span class="r">…"THE TRIANGLE EXPERIENCE IS CLOSED TODAY" — '+tris+' missing</span>');
+      await say('<span class="a">▸ → STORE:</span> "fine — '+tris+' more, no triangles" <span class="d">(a wasted second trip memory would have skipped)</span>');
+      batch=kept0.concat(storeBatch(tris,false));
+      await say('<span class="a">▸ ← STORE:</span> '+batch.map(emo).join(" "));
     }else{
-      await say('<span class="a">▸ ← store sends:</span> '+batch.map(emo).join(" ")+' <span class="d">(got lucky — no triangles in the batch)</span>');
+      await say('<span class="a">▸ ← STORE:</span> '+batch.map(emo).join(" ")+' <span class="d">(got lucky — no triangles in the batch)</span>');
     }
   }
 
-  /* apply rules */
+  /* the premium gold square — a decision only the human makes */
+  await step(4);
+  let goldBought=false;
+  await say('<span class="gold">▸ STORE: "…and for our SPECIAL guests: the PREMIUM GOLD SQUARE. Very rare. Costs extra."</span>',750);
+  if(goldPolicy==="yes"){
+    goldBought=true;
+    await say('<span class="v">▸ memory says you always want it</span> — bought, no need to ask.');
+    blogAdd('<span class="who">Claude:</span> bought the gold square (your standing yes)');
+  }else if(goldPolicy==="no"){
+    await say('<span class="v">▸ memory says never</span> — walks right past it.');
+    blogAdd('<span class="who">Claude:</span> skipped the gold square (your standing no)');
+  }else{
+    $("#n4").classList.remove("lit");$("#n4").classList.add("hold");
+    await say('<span class="a">▸ Claude does NOT decide on spending your money. Posts it to THE BOARD and waits for you…</span> <b>↑ answer on the board above</b>',300);
+    blogAdd('<span class="who">Claude:</span> posted a question — waiting on you ⏳');
+    const ans=await askBoard('🏪 The store is offering a <b>premium GOLD SQUARE</b> (costs extra). Should Claude buy it?');
+    goldPolicy=ans?"yes":"no";goldBought=ans;
+    $("#n4").classList.remove("hold");$("#n4").classList.add("lit");
+    blogAdd('<span class="dec">YOU DECIDED:</span> gold squares — '+(ans?"YES, always":"no, never"));
+    const c=document.createElement("div");c.className="chip mem learned";
+    c.innerHTML='<span class="led"></span>✨ Board decision: gold squares = '+(ans?"always yes":"never");
+    $("#memTray").appendChild(c);
+    await say('<span class="g">▸ your answer is written to memory</span> — it will never ask about gold squares again.');
+  }
+  if(goldBought)batch.push({kind:"square",color:"gold",size:58});
+
+  /* apply CLAUDE.md rules */
   let kept=batch.slice(), binned=[];
   if(has("r_red")){const cut=kept.filter(s=>s.color==="red");kept=kept.filter(s=>s.color!=="red");
     if(cut.length){binned.push(...cut);await say('<span class="r">▸ rule "never red":</span> threw out '+cut.length+'.');}}
   if(has("r_sq")){const cut=kept.filter(s=>s.kind!=="square");kept=kept.filter(s=>s.kind==="square");
     if(cut.length){binned.push(...cut);await say('<span class="r">▸ rule "squares only":</span> threw out '+cut.length+'.');}}
-  if(has("r_max")&&kept.length>5){const cut=kept.slice(5);kept=kept.slice(0,5);binned.push(...cut);
-    await say('<span class="r">▸ rule "max 5":</span> kept the first 5, binned '+cut.length+'.');}
+  if(has("r_max")&&kept.length>5){const gold=kept.filter(s=>s.color==="gold"),rest=kept.filter(s=>s.color!=="gold");
+    kept=gold.concat(rest).slice(0,5);const cut=gold.concat(rest).slice(5);binned.push(...cut);
+    await say('<span class="r">▸ rule "max 5":</span> kept 5, binned '+cut.length+'.');}
   if(has("r_sort")){kept.sort((a,b)=>b.size-a.size);await say('<span class="c">▸ rule "big → small":</span> lined up by size.');}
   if(has("m_blue")&&!has("r_sort")){kept.sort((a,b)=>(a.color==="blue"?-1:0)-(b.color==="blue"?-1:0));}
 
-  await step(4);
+  await step(5);
   const stage=$("#stage");stage.classList.add("show");
   const out=$("#out");
   if(kept.length===0){
     out.innerHTML='<div class="empty">…nothing survived your rules. Claude would go back to the store — or tell you your rules ate everything. 🤷</div>';
   }else{
     kept.forEach((s,i)=>{const d=document.createElement("div");d.className="shp";d.style.animationDelay=(i*0.09)+"s";
-      d.innerHTML=(has("m_blue")&&s.color==="blue"?'<span class="star">⭐</span>':"")+shapeSVG(s,false);
+      const star=(s.color==="gold")?'<span class="star">✨</span>':((has("m_blue")&&s.color==="blue")?'<span class="star">⭐</span>':"");
+      d.innerHTML=star+shapeSVG(s,false);
       out.appendChild(d);});
   }
   if(binned.length){$("#binrow").classList.add("show");
     binned.forEach(s=>{const d=document.createElement("div");d.className="shp";d.innerHTML=shapeSVG(s,true);$("#bin").appendChild(d);});}
   await say('<span class="g">▸ shows you '+kept.length+' shape'+(kept.length===1?"":"s")+', arranged your way.</span>');
+  blogAdd('<span class="who">Claude:</span> delivered '+kept.length+' shapes'+(binned.length?' ('+binned.length+' binned by your rules)':""));
 
   /* learn */
   $("#loop").classList.add("lit");
-  if(!has("m_tri")&&batch.length){
+  if(!has("m_tri")&&batch.some(s=>s.kind!=="triangle")){
     const c=document.createElement("div");c.className="chip mem learned";
     c.innerHTML='<span class="led"></span>✨ Store keeps running out of triangles';
     c.addEventListener("click",()=>c.classList.toggle("off"));$("#memTray").appendChild(c);
     await say('<span class="g">▸ writes a note:</span> "store keeps running out of triangles" — next run starts smarter.');
   }else{
-    await say('<span class="g">▸ nothing new worth writing down this time.</span>');
+    await say('<span class="g">▸ run logged.</span> <span class="d">The store thanks you for attending the grand opening. Again.</span>');
   }
   running=false;$("#run").disabled=false;
 }
 $("#run").addEventListener("click",run);
-$("#reset").addEventListener("click",()=>{resetBoard();
-  con.innerHTML='<span class="d">Claude’s thinking will appear here…</span>';
+$("#reset").addEventListener("click",()=>{resetBoardFlow();goldPolicy=null;
+  con.innerHTML='<span class="d">Claude&#39;s thinking will appear here…</span>';
+  $("#qbox").innerHTML='<div class="none">nothing needs you right now</div>';
+  $("#blog").innerHTML='<div class="none">quiet so far</div>';
   document.querySelectorAll(".chip.learned").forEach(c=>c.remove());});
 </script>
 </body>
