@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Claude Can See — the Desk</title>
+<style>
+:root{
+  --bg:#0a0c12; --panel:#10141f; --edge:#232b3f; --txt:#e4ebf5; --dim:#8b98ad;
+  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --vio:#a78bfa; --red:#f87171; --gold:#f5c542;
+  --chip:#171d2d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
+body{padding-bottom:70px}
+.wrap{max-width:800px;margin:0 auto;padding:0 16px}
+
+header{padding:36px 0 4px;text-align:center}
+h1{font-size:clamp(22px,5vw,31px);font-weight:700;letter-spacing:1px}
+h1 em{font-style:normal;color:var(--cy)}
+.sub{color:var(--dim);margin-top:8px;font-size:15px;max-width:580px;margin-left:auto;margin-right:auto}
+.sub b{color:var(--txt)}
+
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:17px 19px;margin-top:18px}
+.card h2{font-size:12.5px;letter-spacing:2.5px;color:var(--dim);font-weight:600;margin-bottom:3px}
+.card h2 i{font-style:normal;color:#39465f;letter-spacing:0;text-transform:none}
+.card .why{color:var(--dim);font-size:13.5px;margin-bottom:12px}
+.card .why b{color:var(--txt)}
+
+/* ── the desk ── */
+.meter{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.bar{flex:1;height:9px;border-radius:6px;background:#0c1019;border:1px solid var(--edge);overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--grn));transition:width .3s}
+.fill.warn{background:linear-gradient(90deg,var(--amb),#f97316)}
+.fill.full{background:linear-gradient(90deg,#f97316,var(--red))}
+.cnt{font:12px Consolas,ui-monospace,monospace;color:var(--dim);letter-spacing:1px;flex:none}
+
+.desk{background:#0c1019;border:1px solid var(--edge);border-radius:12px;padding:11px;min-height:96px;
+  display:flex;flex-direction:column;gap:7px}
+.slot{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;background:var(--chip);
+  border:1.5px solid var(--edge);font-size:14px;animation:slidein .3s ease both}
+@keyframes slidein{from{transform:translateY(-9px);opacity:0}to{transform:none;opacity:1}}
+.slot.rule{border-color:#3d4f7a;background:#141c2e}
+.slot .who{font:11px Consolas,ui-monospace,monospace;letter-spacing:1px;color:var(--dim);flex:none;width:46px}
+.slot .who.c{color:var(--cy)}
+.slot .tx{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slot .pin{flex:none;border:none;background:transparent;cursor:pointer;font-size:15px;opacity:.35;padding:0 2px}
+.slot .pin:hover{opacity:1}
+.slot .pin.done{opacity:1}
+.slot.falling{animation:falloff .5s ease-in forwards}
+@keyframes falloff{to{transform:translateX(-40px) rotate(-6deg);opacity:0;max-height:0;padding:0;margin-top:-7px}}
+.desk .none{color:#44557a;font-size:13px;font-style:italic;padding:4px 2px}
+
+.gone{margin-top:11px;padding-top:11px;border-top:1px dashed #2a3348;display:none}
+.gone.show{display:block}
+.gone .lbl{font:11px Consolas,ui-monospace,monospace;letter-spacing:2px;color:#5c4550;margin-bottom:7px}
+.gonelist{display:flex;flex-wrap:wrap;gap:6px}
+.gonechip{font-size:12px;padding:5px 10px;border-radius:8px;background:#160f14;border:1px solid #3a2530;
+  color:#7a5e68;text-decoration:line-through}
+
+/* ── memory shelf ── */
+.shelf{display:flex;flex-wrap:wrap;gap:9px}
+.shelf .none{color:#44557a;font-size:13px;font-style:italic;padding:2px 0}
+.mchip{padding:9px 14px;border-radius:11px;background:var(--chip);border:1.5px solid var(--vio);
+  font-size:14px;display:flex;align-items:center;gap:9px}
+.mchip .led{width:9px;height:9px;border-radius:50%;background:var(--vio);box-shadow:0 0 8px var(--vio);flex:none}
+
+/* ── controls ── */
+.runrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+button.act{padding:12px 20px;border-radius:12px;border:1.5px solid var(--edge);background:var(--chip);
+  color:var(--txt);cursor:pointer;font-size:14px}
+button.act:disabled{opacity:.35;cursor:default}
+button.go{border-color:#2c584a;background:linear-gradient(180deg,#1a3d2c,#0f2418);color:var(--grn);font-weight:700;letter-spacing:1px}
+button.ghost{background:transparent;color:var(--dim);font-size:13px}
+
+.console{margin-top:14px;background:#070b13;border:1px solid var(--edge);border-radius:12px;padding:14px 16px;
+  font:13px/1.85 Consolas,ui-monospace,monospace;min-height:76px;white-space:pre-wrap}
+.console .c{color:var(--cy)} .console .g{color:var(--grn)} .console .a{color:var(--amb)}
+.console .r{color:var(--red)} .console .v{color:var(--vio)} .console .d{color:var(--dim)}
+
+.result{margin-top:14px;border-radius:12px;padding:14px 16px;display:none;border:1.5px solid var(--edge);background:#0c1019}
+.result.show{display:block}
+.result.bad{border-color:#5a2630;background:#160f14}
+.result.good{border-color:#2c584a;background:#0c1a14}
+.result .verdict{font-size:14px;margin-bottom:11px}
+.result.bad .verdict{color:var(--red)}
+.result.good .verdict{color:var(--grn)}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:44px;height:44px;border-radius:9px;animation:drop .4s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes drop{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}
+
+.learnbox{margin-top:26px}
+.learnbox h3{font-size:13px;letter-spacing:2px;color:var(--cy);margin-bottom:10px}
+.learnbox p{color:var(--dim);font-size:14.5px;margin-bottom:11px}
+.learnbox p b{color:var(--txt)}
+.foot{text-align:center;color:#39465f;font-size:12.5px;margin-top:34px}
+.foot a{color:#4b5b7a}
+.nav{text-align:center;margin-top:26px}
+.nav a{display:inline-block;padding:11px 18px;border-radius:11px;border:1px solid var(--edge);
+  background:var(--panel);color:var(--dim);text-decoration:none;font-size:13.5px}
+.nav a:hover{color:var(--txt);border-color:var(--cy)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>WHAT <em>CLAUDE</em> CAN SEE</h1>
+  <div class="sub">Claude has a <b>desk</b>, and it only fits so much. Everything on it, it knows. Everything that falls off, it does not — and it won&#39;t tell you it fell.</div>
+</header>
+
+<div class="card">
+  <h2>① THE DESK <i>— everything Claude knows right this second</i></h2>
+  <div class="why">Every message you send lands here. When the desk is full, the <b>oldest card slides off the edge</b> and is gone. Tap 📌 on any card to copy it to memory before that happens.</div>
+  <div class="meter">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="cnt" id="cnt">0 / 7</div>
+  </div>
+  <div class="desk" id="desk"></div>
+  <div class="gone" id="gone"><div class="lbl">🗑 FELL OFF THE DESK — CLAUDE CAN&#39;T SEE THESE ANYMORE</div><div class="gonelist" id="gonelist"></div></div>
+</div>
+
+<div class="card">
+  <h2>② MEMORY <i>— the one shelf that survives</i></h2>
+  <div class="why">A card here doesn&#39;t take up desk space and never falls off. This is the whole reason memory exists.</div>
+  <div class="shelf" id="shelf"></div>
+</div>
+
+<div class="card">
+  <h2>③ TALK TO IT</h2>
+  <div class="why">Keep talking and watch the desk fill. Then ask it to do the job and see whether it still remembers your rule.</div>
+  <div class="runrow">
+    <button class="act" id="say">💬 SAY SOMETHING</button>
+    <button class="act go" id="test">▶ ASK IT TO MAKE SOMETHING</button>
+    <button class="act ghost" id="fresh">↻ start a fresh chat</button>
+    <button class="act ghost" id="reset">reset</button>
+  </div>
+  <div class="console" id="con"><span class="d">the desk starts with one card: your rule.</span></div>
+  <div class="result" id="result">
+    <div class="verdict" id="verdict"></div>
+    <div class="swatches" id="sw"></div>
+  </div>
+</div>
+
+<div class="card learnbox">
+  <h3>THE WHOLE TRICK</h3>
+  <p><b>The desk is small, and it forgets silently.</b> Claude never says "I lost that." It just stops knowing. A long chat isn&#39;t a smarter chat — the beginning of it has quietly slid onto the floor.</p>
+  <p><b>That&#39;s what memory is for.</b> Anything you&#39;d have to repeat, put on the shelf. It costs no desk space and it survives every fall.</p>
+  <p><b>A fresh chat is a clean desk, not a factory reset.</b> Hit "start a fresh chat" — the clutter goes, the shelf stays. That&#39;s why starting over often makes it sharper instead of dumber.</p>
+  <p><b>Repeating yourself is a symptom.</b> If you&#39;re saying the same rule for the third time, it fell off. Don&#39;t say it louder — put it on the shelf.</p>
+</div>
+
+<div class="nav"><a href="../">← back to HOW CLAUDE WORKS (the Shape Store)</a></div>
+<div class="foot">a teaching toy · a simplified simulation of a real Claude setup</div>
+</div>
+
+<script>
+const CAP=7;
+const RULE={who:"you",tx:"📜 never use red",rule:true,id:"rule"};
+const CHAT=[
+  ["you","make it funnier"],["claude","here are 3 takes"],
+  ["you","no, darker"],["claude","reworked all 3"],
+  ["you","the second one"],["claude","tightened it up"],
+  ["you","what about the ending"],["claude","three endings for you"],
+  ["you","keep the first"],["claude","locked it in"],
+  ["you","now do a short version"],["claude","cut it to 20 seconds"],
+  ["you","punch up the middle"],["claude","new middle beat"],
+];
+let desk=[],shelf=[],gone=[],chatI=0,uid=0;
+const $=s=>document.querySelector(s);
+const con=$("#con");
+const remembered=()=>desk.some(c=>c.rule)||shelf.some(c=>c.rule);
+
+function log(html){const d=document.createElement("div");d.innerHTML=html;con.appendChild(d);con.scrollTop=con.scrollHeight;}
+function clearLog(){con.innerHTML="";}
+
+function draw(){
+  const d=$("#desk");d.innerHTML="";
+  if(!desk.length)d.innerHTML='<div class="none">the desk is empty — Claude knows nothing right now</div>';
+  desk.forEach(c=>{
+    const el=document.createElement("div");
+    el.className="slot"+(c.rule?" rule":"");
+    const pinned=shelf.some(s=>s.id===c.id);
+    el.innerHTML='<span class="who'+(c.who==="claude"?" c":"")+'">'+c.who+'</span>'+
+      '<span class="tx">'+c.tx+'</span>'+
+      '<button class="pin'+(pinned?" done":"")+'" title="copy to memory">'+(pinned?"📌":"📍")+'</button>';
+    el.querySelector(".pin").addEventListener("click",()=>pin(c));
+    d.appendChild(el);});
+
+  const sh=$("#shelf");sh.innerHTML="";
+  if(!shelf.length)sh.innerHTML='<div class="none">nothing saved — everything here is one fall away from gone</div>';
+  shelf.forEach(c=>{const el=document.createElement("div");el.className="mchip";
+    el.innerHTML='<span class="led"></span>'+c.tx;sh.appendChild(el);});
+
+  const g=$("#gonelist");g.innerHTML="";
+  $("#gone").classList.toggle("show",gone.length>0);
+  gone.forEach(c=>{const el=document.createElement("div");el.className="gonechip";el.textContent=c.tx;g.appendChild(el);});
+
+  const n=desk.length;
+  $("#cnt").textContent=n+" / "+CAP;
+  const f=$("#fill");f.style.width=Math.round(n/CAP*100)+"%";
+  f.className="fill"+(n>=CAP?" full":n>=CAP-2?" warn":"");
+  $("#say").disabled=false;
+}
+
+function pin(c){
+  if(shelf.some(s=>s.id===c.id))return;
+  shelf.push({...c});draw();
+  log('<span class="v">▸ copied to memory:</span> "'+c.tx.replace(/^\S+\s/,"")+'" — it can&#39;t fall off now.');
+}
+
+function push(who,tx,extra){
+  const c={who,tx,id:"c"+(uid++),...(extra||{})};
+  desk.push(c);
+  while(desk.length>CAP){
+    const lost=desk.shift();
+    gone.push(lost);
+    const kept=shelf.some(s=>s.id===lost.id);
+    if(lost.rule&&!kept)log('<span class="r">▸ the desk overflowed — "never use red" just slid off. Claude no longer knows about it.</span>');
+    else if(!kept)log('<span class="d">▸ desk full — "'+lost.tx+'" slid off and is gone.</span>');
+    else log('<span class="d">▸ desk full — "'+lost.tx+'" slid off, but it&#39;s safe on the shelf.</span>');
+  }
+  return c;
+}
+
+$("#say").addEventListener("click",()=>{
+  const [who,tx]=CHAT[chatI%CHAT.length];chatI++;
+  push(who,tx);
+  draw();
+});
+
+$("#test").addEventListener("click",()=>{
+  const ok=remembered();
+  const res=$("#result"),sw=$("#sw");
+  res.className="result show "+(ok?"good":"bad");
+  $("#verdict").innerHTML=ok
+    ? "✓ no red — it still has your rule"+(shelf.some(c=>c.rule)&&!desk.some(c=>c.rule)?' <b>(off the desk, but on the shelf)</b>':"")
+    : "✗ it used red. The rule fell off the desk, so it doesn&#39;t know.";
+  const pool=ok?["#4c8df0","#43c96b","#f0c93c","#a78bfa"]:["#f0564c","#4c8df0","#f0564c","#43c96b","#f0564c","#f0c93c"];
+  sw.innerHTML="";
+  for(let i=0;i<6;i++){const d=document.createElement("div");d.className="sw";
+    d.style.background=pool[Math.floor(Math.random()*pool.length)];
+    d.style.animationDelay=(i*0.06)+"s";sw.appendChild(d);}
+  log(ok?'<span class="g">▸ made you 6 things — no red.</span>'
+        :'<span class="r">▸ made you 6 things — with red in them. It wasn&#39;t ignoring you. It couldn&#39;t see the rule.</span>');
+  push("claude","made you 6 things");draw();
+});
+
+$("#fresh").addEventListener("click",()=>{
+  desk=[];gone=[];chatI=0;
+  clearLog();
+  log('<span class="c">▸ fresh chat — the desk is wiped clean.</span>');
+  if(shelf.length)log('<span class="v">▸ the shelf survived:</span> '+shelf.map(c=>'"'+c.tx.replace(/^\S+\s/,"")+'"').join(" · "));
+  else log('<span class="d">▸ nothing was on the shelf, so nothing came back.</span>');
+  $("#result").className="result";
+  draw();
+});
+
+$("#reset").addEventListener("click",start);
+
+function start(){
+  desk=[];shelf=[];gone=[];chatI=0;uid=0;
+  push(RULE.who,RULE.tx,{rule:true});
+  clearLog();
+  log('<span class="d">▸ you told it one rule. It&#39;s card 1 on the desk.</span>');
+  $("#result").className="result";
+  draw();
+}
+start();
+</script>
+</body>
+</html>
