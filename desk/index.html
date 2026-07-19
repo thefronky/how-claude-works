@@ -7,7 +7,7 @@
 <style>
 :root{
   --bg:#0a0c12; --panel:#10141f; --edge:#232b3f; --txt:#e4ebf5; --dim:#8b98ad;
-  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --vio:#a78bfa; --red:#f87171; --gold:#f5c542;
+  --cy:#4cc9f0; --grn:#4ade80; --amb:#fbbf24; --vio:#a78bfa; --red:#f87171;
   --chip:#171d2d;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -18,7 +18,7 @@ body{padding-bottom:70px}
 header{padding:36px 0 4px;text-align:center}
 h1{font-size:clamp(22px,5vw,31px);font-weight:700;letter-spacing:1px}
 h1 em{font-style:normal;color:var(--cy)}
-.sub{color:var(--dim);margin-top:8px;font-size:15px;max-width:580px;margin-left:auto;margin-right:auto}
+.sub{color:var(--dim);margin-top:8px;font-size:15px;max-width:560px;margin-left:auto;margin-right:auto}
 .sub b{color:var(--txt)}
 
 .card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:17px 19px;margin-top:18px}
@@ -27,84 +27,72 @@ h1 em{font-style:normal;color:var(--cy)}
 .card .why{color:var(--dim);font-size:13.5px;margin-bottom:12px}
 .card .why b{color:var(--txt)}
 
-/* ── the desk ── */
-.meter{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.tray{display:flex;flex-wrap:wrap;gap:9px}
+.tray .none{color:#44557a;font-size:13px;font-style:italic;padding:2px 0}
+.chip{padding:10px 15px;border-radius:11px;background:var(--chip);border:1.5px solid var(--edge);
+  font-size:14.5px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:10px;transition:.15s}
+.chip .led{width:9px;height:9px;border-radius:50%;background:#3a4763;transition:.15s;flex:none}
+.chip.on{border-color:var(--cy)}
+.chip.on .led{background:var(--cy);box-shadow:0 0 8px var(--cy)}
+.chip.mem.on{border-color:var(--vio)}
+.chip.mem.on .led{background:var(--vio);box-shadow:0 0 8px var(--vio)}
+.chip.off{opacity:.5}
+
+/* desk */
+.meter{display:flex;align-items:center;gap:11px;margin-bottom:10px}
 .bar{flex:1;height:9px;border-radius:6px;background:#0c1019;border:1px solid var(--edge);overflow:hidden}
-.fill{height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--grn));transition:width .3s}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--grn));transition:width .25s}
 .fill.warn{background:linear-gradient(90deg,var(--amb),#f97316)}
 .fill.full{background:linear-gradient(90deg,#f97316,var(--red))}
 .cnt{font:12px Consolas,ui-monospace,monospace;color:var(--dim);letter-spacing:1px;flex:none}
-
-.desk{background:#0c1019;border:1px solid var(--edge);border-radius:12px;padding:11px;min-height:96px;
-  display:flex;flex-direction:column;gap:7px}
-.slot{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;background:var(--chip);
-  border:1.5px solid var(--edge);font-size:14px;animation:slidein .3s ease both}
+.desk{background:#0c1019;border:1px solid var(--edge);border-radius:12px;padding:10px;min-height:88px;
+  display:flex;flex-direction:column;gap:6px}
+.slot{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:9px;background:var(--chip);
+  border:1.5px solid var(--edge);font-size:14px;animation:slidein .28s ease both}
 @keyframes slidein{from{transform:translateY(-9px);opacity:0}to{transform:none;opacity:1}}
 .slot.rule{border-color:#3d4f7a;background:#141c2e}
-.slot .who{font:11px Consolas,ui-monospace,monospace;letter-spacing:1px;color:var(--dim);flex:none;width:52px}
+.slot .who{font:11px Consolas,ui-monospace,monospace;letter-spacing:1px;color:var(--dim);flex:none;width:44px}
 .slot .who.c{color:var(--cy)}
-.slot .who.k{color:var(--amb)}
-.slot.pulled{border-color:#5a4526;background:#1a1408}
-.slot .tx{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.slot .pin{flex:none;border:none;background:transparent;cursor:pointer;font-size:15px;opacity:.35;padding:0 2px}
-.slot .pin:hover{opacity:1}
-.slot .pin.done{opacity:1}
-.slot.falling{animation:falloff .5s ease-in forwards}
-@keyframes falloff{to{transform:translateX(-40px) rotate(-6deg);opacity:0;max-height:0;padding:0;margin-top:-7px}}
 .desk .none{color:#44557a;font-size:13px;font-style:italic;padding:4px 2px}
-
 .gone{margin-top:11px;padding-top:11px;border-top:1px dashed #2a3348;display:none}
 .gone.show{display:block}
 .gone .lbl{font:11px Consolas,ui-monospace,monospace;letter-spacing:2px;color:#5c4550;margin-bottom:7px}
 .gonelist{display:flex;flex-wrap:wrap;gap:6px}
 .gonechip{font-size:12px;padding:5px 10px;border-radius:8px;background:#160f14;border:1px solid #3a2530;
-  color:#7a5e68;text-decoration:line-through}
+  color:#7a5e68;text-decoration:line-through;animation:slidein .3s ease both}
 
-/* ── memory shelf ── */
-.shelf{display:flex;flex-wrap:wrap;gap:9px}
-.shelf .none{color:#44557a;font-size:13px;font-style:italic;padding:2px 0}
-.mchip{padding:9px 14px;border-radius:11px;background:var(--chip);border:1.5px solid var(--vio);
-  font-size:14px;display:flex;align-items:center;gap:9px}
-.mchip .led{width:9px;height:9px;border-radius:50%;background:var(--vio);box-shadow:0 0 8px var(--vio);flex:none}
+.ask{display:flex;align-items:center;gap:12px;background:var(--chip);border:1.5px solid var(--edge);
+  border-radius:12px;padding:13px 16px;font-size:15.5px}
+.ask .bub{font-size:22px}
 
-/* ── the cabinet ── */
-.toggle{display:inline-flex;align-items:center;gap:10px;padding:9px 15px;border-radius:11px;background:var(--chip);
-  border:1.5px solid var(--edge);cursor:pointer;font-size:14px;user-select:none;transition:.15s}
-.toggle .led{width:9px;height:9px;border-radius:50%;background:#3a4763;flex:none;transition:.15s}
-.toggle.on{border-color:var(--grn)}
-.toggle.on .led{background:var(--grn);box-shadow:0 0 8px var(--grn)}
-.rows{margin-top:12px;display:flex;flex-direction:column;gap:5px}
-.row{display:flex;gap:12px;font:12.5px Consolas,ui-monospace,monospace;padding:7px 11px;border-radius:8px;
-  background:#0c1019;border:1px solid var(--edge);color:var(--dim)}
-.row .d{color:var(--txt);width:34px;flex:none}
-.row.new{border-color:var(--grn);animation:slidein .35s ease both}
-.row.hit{border-color:var(--amb);background:#1a1408;color:var(--txt)}
-.cabmeta{font:11px Consolas,ui-monospace,monospace;color:#44557a;letter-spacing:1px;margin-top:9px}
-.answer{margin-top:13px;padding:12px 15px;border-radius:11px;border:1.5px solid var(--edge);
-  background:#0c1019;display:none;font-size:14.5px}
-.answer.show{display:block}
-.answer.bad{border-color:#5a2630;background:#160f14;color:var(--red)}
-.answer.good{border-color:#2c584a;background:#0c1a14;color:var(--grn)}
-.answer .note{display:block;margin-top:8px;font-size:12.5px;color:var(--dim)}
+.flow{display:flex;align-items:center;margin:14px 0 0;overflow-x:auto;padding-bottom:6px}
+.fnode{flex:1;min-width:74px;text-align:center;padding:12px 4px;border-radius:12px;background:var(--chip);
+  border:1.5px solid var(--edge);transition:.25s}
+.fnode .ic{font-size:20px;display:block;margin-bottom:2px;filter:grayscale(.7);transition:.25s}
+.fnode .nm{font-size:9.5px;letter-spacing:1px;color:var(--dim)}
+.fnode.lit{border-color:var(--cy);box-shadow:0 0 15px #4cc9f04d;background:#0e2130}
+.fnode.lit .ic{filter:none}.fnode.lit .nm{color:var(--cy)}
+.fnode.bad{border-color:#5a2630;box-shadow:0 0 15px #f8717144;background:#1d1014}
+.fnode.bad .nm{color:var(--red)}
+.arrow{width:18px;flex:none;text-align:center;color:#33405f;font-size:14px;transition:.2s}
+.arrow.lit{color:var(--cy);text-shadow:0 0 8px var(--cy)}
 
-/* ── controls ── */
-.runrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-button.act{padding:12px 20px;border-radius:12px;border:1.5px solid var(--edge);background:var(--chip);
-  color:var(--txt);cursor:pointer;font-size:14px}
-button.act:disabled{opacity:.35;cursor:default}
-button.go{border-color:#2c584a;background:linear-gradient(180deg,#1a3d2c,#0f2418);color:var(--grn);font-weight:700;letter-spacing:1px}
-button.ghost{background:transparent;color:var(--dim);font-size:13px}
+.runrow{display:flex;gap:12px;margin-top:14px}
+#run{padding:13px 42px;border-radius:12px;border:1.5px solid #2c584a;font-size:16px;letter-spacing:2px;cursor:pointer;
+  background:linear-gradient(180deg,#1a3d2c,#0f2418);color:var(--grn);font-weight:700}
+#run:disabled{opacity:.4}
+#reset{padding:13px 18px;border-radius:12px;border:1.5px solid var(--edge);background:transparent;color:var(--dim);cursor:pointer;font-size:13px}
 
 .console{margin-top:14px;background:#070b13;border:1px solid var(--edge);border-radius:12px;padding:14px 16px;
-  font:13px/1.85 Consolas,ui-monospace,monospace;min-height:76px;white-space:pre-wrap}
+  font:13px/1.85 Consolas,ui-monospace,monospace;min-height:100px;white-space:pre-wrap}
 .console .c{color:var(--cy)} .console .g{color:var(--grn)} .console .a{color:var(--amb)}
 .console .r{color:var(--red)} .console .v{color:var(--vio)} .console .d{color:var(--dim)}
 
-.result{margin-top:14px;border-radius:12px;padding:14px 16px;display:none;border:1.5px solid var(--edge);background:#0c1019}
+.result{margin-top:14px;border-radius:12px;padding:15px 17px;display:none;border:1.5px solid var(--edge);background:#0c1019}
 .result.show{display:block}
 .result.bad{border-color:#5a2630;background:#160f14}
 .result.good{border-color:#2c584a;background:#0c1a14}
-.result .verdict{font-size:14px;margin-bottom:11px}
+.verdict{font-size:14.5px;margin-bottom:12px}
 .result.bad .verdict{color:var(--red)}
 .result.good .verdict{color:var(--grn)}
 .swatches{display:flex;gap:10px;flex-wrap:wrap}
@@ -116,7 +104,6 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
 .learnbox p{color:var(--dim);font-size:14.5px;margin-bottom:11px}
 .learnbox p b{color:var(--txt)}
 .foot{text-align:center;color:#39465f;font-size:12.5px;margin-top:34px}
-.foot a{color:#4b5b7a}
 .nav{text-align:center;margin-top:26px}
 .nav a{display:inline-block;padding:11px 18px;border-radius:11px;border:1px solid var(--edge);
   background:var(--panel);color:var(--dim);text-decoration:none;font-size:13.5px}
@@ -128,49 +115,46 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
 
 <header>
   <h1>WHAT <em>CLAUDE</em> CAN SEE</h1>
-  <div class="sub">Claude has a <b>desk</b>, and it only fits so much. Everything on it, it knows. Everything that falls off, it does not — and it won&#39;t tell you it fell. Three places things can live, and mixing them up is the expensive mistake.</div>
+  <div class="sub">Claude has a <b>desk</b>, and it only fits so much. What&#39;s on it, it knows. What falls off, it doesn&#39;t — and it won&#39;t tell you it fell. Flip the switches, press RUN.</div>
 </header>
 
 <div class="card">
-  <h2>① THE DESK <i>— everything Claude knows right this second</i></h2>
-  <div class="why">Every message you send lands here. When the desk is full, the <b>oldest card slides off the edge</b> and is gone. Tap 📌 on any card to copy it to memory before that happens.</div>
+  <h2>① THE DESK <i>— everything Claude knows right now</i></h2>
+  <div class="why">Seven cards fit. Every message lands here, and when it&#39;s full the <b>oldest card slides off</b>. Watch it happen during the run.</div>
+  <div class="tray" id="deskTray" style="margin-bottom:13px"></div>
   <div class="meter">
     <div class="bar"><div class="fill" id="fill"></div></div>
     <div class="cnt" id="cnt">0 / 7</div>
   </div>
   <div class="desk" id="desk"></div>
-  <div class="gone" id="gone"><div class="lbl">🗑 FELL OFF THE DESK — CLAUDE CAN&#39;T SEE THESE ANYMORE</div><div class="gonelist" id="gonelist"></div></div>
+  <div class="gone" id="gone"><div class="lbl">🗑 SLID OFF — CLAUDE CAN&#39;T SEE THESE</div><div class="gonelist" id="gonelist"></div></div>
 </div>
 
 <div class="card">
   <h2>② MEMORY <i>— the one shelf that survives</i></h2>
-  <div class="why">A card here doesn&#39;t take up desk space and never falls off. This is the whole reason memory exists.</div>
-  <div class="shelf" id="shelf"></div>
+  <div class="why">Anything here never falls off and costs no desk space. <b>Switch it on and run again</b> to see the difference.</div>
+  <div class="tray" id="memTray"></div>
 </div>
 
 <div class="card">
-  <h2>③ THE CABINET <i>— the record of what actually happened</i></h2>
-  <div class="why">Memory holds a few things about <b>you</b>. The cabinet holds <b>every row</b> — the store&#39;s log of past deliveries, too many to ever sit on the desk. Claude doesn&#39;t carry it around; it looks up the one row it needs. You can read and edit the same cabinet yourself.</div>
-  <div class="toggle" id="cabtog"><span class="led"></span><span id="cablbl">cabinet not connected</span></div>
-  <div class="rows" id="rows"></div>
-  <div class="cabmeta" id="cabmeta"></div>
-  <div class="runrow">
-    <button class="act" id="ask">❓ WHAT CAME IN TUESDAY?</button>
-    <button class="act" id="logshow">✎ log today&#39;s delivery</button>
+  <h2>③ YOUR ASK</h2>
+  <div class="ask"><span class="bub">💬</span><span>"Remember — <b>never use red</b>." …then a normal back-and-forth… <b>"okay, make me six."</b></span></div>
+  <div class="flow">
+    <div class="fnode" id="n0"><span class="ic">📜</span><span class="nm">YOUR RULE</span></div>
+    <div class="arrow" id="a0">▶</div>
+    <div class="fnode" id="n1"><span class="ic">💬</span><span class="nm">THE CHAT</span></div>
+    <div class="arrow" id="a1">▶</div>
+    <div class="fnode" id="n2"><span class="ic">🗄</span><span class="nm">DESK FILLS</span></div>
+    <div class="arrow" id="a2">▶</div>
+    <div class="fnode" id="n3"><span class="ic">🗑</span><span class="nm">WHAT FELL</span></div>
+    <div class="arrow" id="a3">▶</div>
+    <div class="fnode" id="n4"><span class="ic">🖼</span><span class="nm">THE JOB</span></div>
   </div>
-  <div class="answer" id="answer"></div>
-</div>
-
-<div class="card">
-  <h2>④ TALK TO IT</h2>
-  <div class="why">Keep talking and watch the desk fill. Then ask it to do the job and see whether it still remembers your rule.</div>
   <div class="runrow">
-    <button class="act" id="say">💬 SAY SOMETHING</button>
-    <button class="act go" id="test">▶ ASK IT TO MAKE SOMETHING</button>
-    <button class="act ghost" id="fresh">↻ start a fresh chat</button>
-    <button class="act ghost" id="reset">reset</button>
+    <button id="run">▶ RUN</button>
+    <button id="reset">reset</button>
   </div>
-  <div class="console" id="con"><span class="d">the desk starts with one card: your rule.</span></div>
+  <div class="console" id="con"><span class="d">Claude&#39;s thinking will appear here…</span></div>
   <div class="result" id="result">
     <div class="verdict" id="verdict"></div>
     <div class="swatches" id="sw"></div>
@@ -179,13 +163,10 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
 
 <div class="card learnbox">
   <h3>THE WHOLE TRICK</h3>
-  <p><b>The desk is small, and it forgets silently.</b> Claude never says "I lost that." It just stops knowing. A long chat isn&#39;t a smarter chat — the beginning of it has quietly slid onto the floor.</p>
-  <p><b>That&#39;s what memory is for.</b> Anything you&#39;d have to repeat, put on the shelf. It costs no desk space and it survives every fall.</p>
-  <p><b>A fresh chat is a clean desk, not a factory reset.</b> Hit "start a fresh chat" — the clutter goes, the shelf stays. That&#39;s why starting over often makes it sharper instead of dumber.</p>
-  <p><b>Repeating yourself is a symptom.</b> If you&#39;re saying the same rule for the third time, it fell off. Don&#39;t say it louder — put it on the shelf.</p>
-  <p><b>"I don&#39;t know" comes out sounding like an answer.</b> Ask about Tuesday with no cabinet and you get a confident number that is simply invented — ask twice and it changes. Wrong doesn&#39;t look wrong. That&#39;s the thing to watch for.</p>
-  <p><b>Memory is not a filing cabinet.</b> The shelf is a few facts about you. The cabinet is every row of what happened — and it looks up the one row it needs instead of hauling all 340 onto the desk. Putting records on the shelf just buries the rules.</p>
-  <p><b>The cabinet is yours, not the AI&#39;s.</b> You can open it, read it, and fix it without asking anything. That&#39;s what makes it the source of truth — it stays right whether or not any AI is running.</p>
+  <p><b>It forgets silently.</b> Claude never says "I lost that." It just stops knowing. Your rule was the first thing you said, which makes it the <b>first thing to fall off</b>.</p>
+  <p><b>Wrong doesn&#39;t look wrong.</b> It didn&#39;t ignore you and it didn&#39;t apologise — it answered confidently with the rule already on the floor.</p>
+  <p><b>That&#39;s what memory is for.</b> Switch the shelf on: the card still slides off the desk, but the rule survives and the job comes back clean.</p>
+  <p><b>Short chat, same fix.</b> Turn the long conversation off and nothing ever falls. Long chats aren&#39;t smarter chats — the start of them is on the floor.</p>
 </div>
 
 <div class="nav"><a href="../">← back to HOW CLAUDE WORKS (the Shape Store)</a></div>
@@ -194,174 +175,126 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
 
 <script>
 const CAP=7;
-const RULE={who:"you",tx:"📜 never use red",rule:true,id:"rule"};
-const CHAT=[
-  ["you","make it funnier"],["claude","here are 3 takes"],
-  ["you","no, darker"],["claude","reworked all 3"],
-  ["you","the second one"],["claude","tightened it up"],
-  ["you","what about the ending"],["claude","three endings for you"],
-  ["you","keep the first"],["claude","locked it in"],
-  ["you","now do a short version"],["claude","cut it to 20 seconds"],
-  ["you","punch up the middle"],["claude","new middle beat"],
-];
-let desk=[],shelf=[],gone=[],chatI=0,uid=0;
+const CHAT=[["you","make it funnier"],["claude","here are 3 takes"],["you","no, darker"],
+  ["claude","reworked all 3"],["you","the second one"],["claude","tightened it up"],
+  ["you","what about the ending"],["claude","three endings"],["you","keep the first"],
+  ["claude","locked it in"],["you","now a short version"],["claude","cut to 20 seconds"]];
 
-/* the cabinet — far more rows than could ever sit on the desk */
-const SEED=[["Sat",8,2],["Sun",6,0],["Tue",9,3],["Wed",7,1],["Thu",8,2]];
-let rows=[],rowTotal=0,cabinetOn=false,lastGuess=null,hitRow=null;
-const num=n=>n.toLocaleString("en-US");
+const SWITCHES=[
+  {id:"s_long",tray:"#deskTray",cls:"rule",txt:"💬 have a long conversation",on:true},
+  {id:"s_mem", tray:"#memTray", cls:"mem", txt:"📌 keep \"never use red\" in memory",on:false},
+];
+const on=new Set(SWITCHES.filter(s=>s.on).map(s=>s.id));
+const has=id=>on.has(id);
+let desk=[],gone=[],running=false,uid=0;
 const $=s=>document.querySelector(s);
 const con=$("#con");
-const remembered=()=>desk.some(c=>c.rule)||shelf.some(c=>c.rule);
 
-function log(html){const d=document.createElement("div");d.innerHTML=html;con.appendChild(d);con.scrollTop=con.scrollHeight;}
-function clearLog(){con.innerHTML="";}
+SWITCHES.forEach(s=>{
+  const t=$(s.tray);if(!t)return;
+  const d=document.createElement("div");
+  d.className="chip "+s.cls+(has(s.id)?" on":" off");
+  d.innerHTML='<span class="led"></span>'+s.txt;
+  d.addEventListener("click",()=>{
+    if(running)return;
+    if(has(s.id)){on.delete(s.id);d.className="chip "+s.cls+" off";}
+    else{on.add(s.id);d.className="chip "+s.cls+" on";}});
+  t.appendChild(d);});
 
-function draw(){
+function say(html,ms){return new Promise(res=>{const d=document.createElement("div");d.innerHTML=html;
+  con.appendChild(d);con.scrollTop=con.scrollHeight;setTimeout(res,ms||560);});}
+function setN(i,cls){$("#n"+i).classList.add(cls||"lit");if(i>0)$("#a"+(i-1)).classList.add("lit");}
+async function step(i,cls){setN(i,cls);await new Promise(r=>setTimeout(r,380));}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+function drawDesk(){
   const d=$("#desk");d.innerHTML="";
-  if(!desk.length)d.innerHTML='<div class="none">the desk is empty — Claude knows nothing right now</div>';
-  desk.forEach(c=>{
-    const el=document.createElement("div");
-    el.className="slot"+(c.rule?" rule":"")+(c.pulled?" pulled":"");
-    const pinned=shelf.some(s=>s.id===c.id);
-    const wc=c.who==="claude"?" c":c.who==="cabinet"?" k":"";
-    el.innerHTML='<span class="who'+wc+'">'+c.who+'</span>'+
-      '<span class="tx">'+c.tx+'</span>'+
-      '<button class="pin'+(pinned?" done":"")+'" title="copy to memory">'+(pinned?"📌":"📍")+'</button>';
-    el.querySelector(".pin").addEventListener("click",()=>pin(c));
+  if(!desk.length)d.innerHTML='<div class="none">nothing on the desk yet</div>';
+  desk.forEach(c=>{const el=document.createElement("div");
+    el.className="slot"+(c.rule?" rule":"");
+    el.innerHTML='<span class="who'+(c.who==="claude"?" c":"")+'">'+c.who+'</span><span>'+c.tx+'</span>';
     d.appendChild(el);});
-
-  const sh=$("#shelf");sh.innerHTML="";
-  if(!shelf.length)sh.innerHTML='<div class="none">nothing saved — everything here is one fall away from gone</div>';
-  shelf.forEach(c=>{const el=document.createElement("div");el.className="mchip";
-    el.innerHTML='<span class="led"></span>'+c.tx;sh.appendChild(el);});
-
   const g=$("#gonelist");g.innerHTML="";
   $("#gone").classList.toggle("show",gone.length>0);
   gone.forEach(c=>{const el=document.createElement("div");el.className="gonechip";el.textContent=c.tx;g.appendChild(el);});
-
-  const rw=$("#rows");rw.innerHTML="";
-  rows.forEach(r=>{const el=document.createElement("div");
-    el.className="row"+(r.fresh?" new":"")+(hitRow===r?" hit":"");
-    el.innerHTML='<span class="d">'+r.d+'</span><span>'+r.v+' shapes</span><span>'+r.g+' red</span>';
-    rw.appendChild(el);});
-  $("#cabmeta").textContent="showing "+rows.length+" of "+num(rowTotal)+" rows · far too many for the desk";
-  $("#cabtog").className="toggle"+(cabinetOn?" on":"");
-  $("#cablbl").textContent=cabinetOn?"cabinet connected":"cabinet not connected";
-  $("#ask").disabled=false;$("#logshow").disabled=!cabinetOn;
-
   const n=desk.length;
   $("#cnt").textContent=n+" / "+CAP;
   const f=$("#fill");f.style.width=Math.round(n/CAP*100)+"%";
   f.className="fill"+(n>=CAP?" full":n>=CAP-2?" warn":"");
-  $("#say").disabled=false;
 }
 
-function pin(c){
-  if(shelf.some(s=>s.id===c.id))return;
-  shelf.push({...c});draw();
-  log('<span class="v">▸ copied to memory:</span> "'+c.tx.replace(/^\S+\s/,"")+'" — it can&#39;t fall off now.');
-}
-
-function push(who,tx,extra){
+function place(who,tx,extra){
   const c={who,tx,id:"c"+(uid++),...(extra||{})};
   desk.push(c);
-  while(desk.length>CAP){
-    const lost=desk.shift();
-    gone.push(lost);
-    const kept=shelf.some(s=>s.id===lost.id);
-    if(lost.rule&&!kept)log('<span class="r">▸ the desk overflowed — "never use red" just slid off. Claude no longer knows about it.</span>');
-    else if(!kept)log('<span class="d">▸ desk full — "'+lost.tx+'" slid off and is gone.</span>');
-    else log('<span class="d">▸ desk full — "'+lost.tx+'" slid off, but it&#39;s safe on the shelf.</span>');
-  }
-  return c;
+  let lost=null;
+  if(desk.length>CAP){lost=desk.shift();gone.push(lost);}
+  drawDesk();
+  return lost;
 }
 
-$("#say").addEventListener("click",()=>{
-  const [who,tx]=CHAT[chatI%CHAT.length];chatI++;
-  push(who,tx);
-  draw();
-});
+function clearRun(){
+  desk=[];gone=[];uid=0;
+  for(let i=0;i<5;i++)$("#n"+i).classList.remove("lit","bad");
+  document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("lit"));
+  $("#result").className="result";
+  drawDesk();
+}
 
-$("#test").addEventListener("click",()=>{
-  const ok=remembered();
+async function run(){
+  if(running)return;running=true;$("#run").disabled=true;
+  clearRun();con.innerHTML="";
+  const memOn=has("s_mem"), longChat=has("s_long");
+
+  await step(0);
+  place("you","📜 never use red",{rule:true});
+  await say('<span class="c">▸ you:</span> "never use red" — that&#39;s card 1 on the desk.');
+  if(memOn)await say('<span class="v">▸ it&#39;s also on the shelf</span> — so losing the card won&#39;t lose the rule.');
+
+  await step(1);
+  const msgs=longChat?CHAT.length:4;
+  await say('<span class="c">▸ then you talk for a while</span> — '+msgs+' messages back and forth.');
+
+  await step(2);
+  let ruleFell=false,alsoFell=0;
+  for(let i=0;i<msgs;i++){
+    const [who,tx]=CHAT[i];
+    const lost=place(who,tx);
+    await wait(230);
+    if(!lost)continue;
+    if(lost.rule){ruleFell=true;
+      await say('<span class="r">▸ desk full — your rule just slid off the edge. It was card 1, so it went first.</span>',760);}
+    else alsoFell++;
+  }
+  if(alsoFell)await say('<span class="d">▸ '+alsoFell+' more card'+(alsoFell===1?"":"s")+' slid off behind it.</span>');
+  if(!ruleFell)await say('<span class="g">▸ the desk never overflowed. Everything you said is still on it.</span>');
+
+  await step(3,ruleFell?"bad":"lit");
+  const knows=!ruleFell||memOn;
+  if(ruleFell&&memOn)await say('<span class="v">▸ the rule card is gone from the desk — but the shelf still has it.</span>');
+  else if(ruleFell)await say('<span class="r">▸ Claude can no longer see the rule anywhere. It doesn&#39;t know it existed.</span>');
+
+  await step(4,knows?"lit":"bad");
+  await say('<span class="c">▸ you:</span> "okay, make me six."');
   const res=$("#result"),sw=$("#sw");
-  res.className="result show "+(ok?"good":"bad");
-  $("#verdict").innerHTML=ok
-    ? "✓ no red — it still has your rule"+(shelf.some(c=>c.rule)&&!desk.some(c=>c.rule)?' <b>(off the desk, but on the shelf)</b>':"")
-    : "✗ it used red. The rule fell off the desk, so it doesn&#39;t know.";
-  const pool=ok?["#4c8df0","#43c96b","#f0c93c","#a78bfa"]:["#f0564c","#4c8df0","#f0564c","#43c96b","#f0564c","#f0c93c"];
+  res.className="result show "+(knows?"good":"bad");
+  $("#verdict").innerHTML=knows
+    ?"✓ no red"+(ruleFell?" — the card fell off, but memory had the rule.":" — the rule never left the desk.")
+    :"✗ it used red. The rule fell off, so it didn&#39;t know there was one.";
+  const pool=knows?["#4c8df0","#43c96b","#f0c93c","#a78bfa"]:["#f0564c","#4c8df0","#f0564c","#43c96b","#f0564c","#f0c93c"];
   sw.innerHTML="";
   for(let i=0;i<6;i++){const d=document.createElement("div");d.className="sw";
     d.style.background=pool[Math.floor(Math.random()*pool.length)];
     d.style.animationDelay=(i*0.06)+"s";sw.appendChild(d);}
-  log(ok?'<span class="g">▸ made you 6 things — no red.</span>'
-        :'<span class="r">▸ made you 6 things — with red in them. It wasn&#39;t ignoring you. It couldn&#39;t see the rule.</span>');
-  push("claude","made you 6 things");draw();
-});
+  await say(knows?'<span class="g">▸ made you six — no red.</span>'
+                :'<span class="r">▸ made you six, with red in them. It wasn&#39;t ignoring you. It couldn&#39;t see the rule.</span>');
+  if(!knows)await say('<span class="a">▸ switch memory on above, then press RUN again.</span>');
 
-$("#cabtog").addEventListener("click",()=>{
-  cabinetOn=!cabinetOn;hitRow=null;
-  log(cabinetOn?'<span class="a">▸ cabinet connected — it can look things up now.</span>'
-               :'<span class="d">▸ cabinet disconnected — it&#39;s on its own again.</span>');
-  draw();
-});
-
-$("#ask").addEventListener("click",()=>{
-  const a=$("#answer");
-  if(!cabinetOn){
-    const g=4+Math.floor(Math.random()*9), gg=Math.floor(Math.random()*5);
-    const repeat=lastGuess!==null&&lastGuess!==g;
-    a.className="answer show bad";
-    a.innerHTML='"Tuesday&#39;s batch was about <b>'+g+' shapes</b>, maybe '+gg+' red."'+
-      '<span class="note">✗ Made up. It has no record of Tuesday — but it answered anyway, and it sounded certain.'+
-      (repeat?' <b>Last time it said '+lastGuess+'.</b> Ask again and the number changes, because it isn&#39;t reading anything.':' Ask again and watch the number change.')+'</span>';
-    log('<span class="r">▸ answered "'+g+' shapes" — with nothing to read. That&#39;s a guess wearing a confident voice.</span>');
-    lastGuess=g;hitRow=null;draw();return;
-  }
-  const r=rows.find(x=>x.d==="Tue");
-  hitRow=r;
-  a.className="answer show good";
-  a.innerHTML='"Tuesday&#39;s batch was <b>'+r.v+' shapes</b>, '+r.g+' of them red."'+
-    '<span class="note">✓ Looked it up. It pulled <b>one row</b> onto the desk — not all '+num(rowTotal)+'. That&#39;s the whole trick.</span>';
-  log('<span class="a">▸ opens the cabinet, finds Tuesday, pulls that one row.</span>');
-  push("cabinet","📄 Tue — "+r.v+" shapes, "+r.g+" red",{pulled:true});
-  draw();
-});
-
-$("#logshow").addEventListener("click",()=>{
-  const v=5+Math.floor(Math.random()*7), g=Math.floor(Math.random()*4);
-  rows.forEach(r=>r.fresh=false);
-  rows.push({d:"Fri",v,g,fresh:true});rowTotal++;
-  if(rows.length>6)rows.shift();
-  log('<span class="g">▸ an agent wrote today&#39;s row: '+v+' shapes, '+g+' red.</span> Nobody has to remember it — next week it&#39;s just there.');
-  draw();
-});
-
-$("#fresh").addEventListener("click",()=>{
-  desk=[];gone=[];chatI=0;
-  clearLog();
-  log('<span class="c">▸ fresh chat — the desk is wiped clean.</span>');
-  if(shelf.length)log('<span class="v">▸ the shelf survived:</span> '+shelf.map(c=>'"'+c.tx.replace(/^\S+\s/,"")+'"').join(" · "));
-  else log('<span class="d">▸ nothing was on the shelf, so nothing came back.</span>');
-  if(cabinetOn)log('<span class="a">▸ the cabinet is untouched — all '+num(rowTotal)+' rows. A new chat never costs you the records.</span>');
-  hitRow=null;$("#result").className="result";$("#answer").className="answer";
-  draw();
-});
-
-$("#reset").addEventListener("click",start);
-
-function start(){
-  desk=[];shelf=[];gone=[];chatI=0;uid=0;
-  rows=SEED.map(([d,v,g])=>({d,v,g}));rowTotal=340;
-  cabinetOn=false;lastGuess=null;hitRow=null;
-  push(RULE.who,RULE.tx,{rule:true});
-  clearLog();
-  log('<span class="d">▸ you told it one rule. It&#39;s card 1 on the desk.</span>');
-  $("#result").className="result";$("#answer").className="answer";
-  draw();
+  running=false;$("#run").disabled=false;
 }
-start();
+$("#run").addEventListener("click",run);
+$("#reset").addEventListener("click",()=>{clearRun();
+  con.innerHTML='<span class="d">Claude&#39;s thinking will appear here…</span>';});
+drawDesk();
 </script>
 </body>
 </html>
