@@ -150,13 +150,13 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
 
 <div class="card">
   <h2>③ THE CABINET <i>— the record of what actually happened</i></h2>
-  <div class="why">Memory holds a few things about <b>you</b>. The cabinet holds <b>every row</b> — too many to ever sit on the desk. Claude doesn&#39;t carry it around; it goes and looks up the one row it needs. You can read and edit the same cabinet yourself.</div>
+  <div class="why">Memory holds a few things about <b>you</b>. The cabinet holds <b>every row</b> — the store&#39;s log of past deliveries, too many to ever sit on the desk. Claude doesn&#39;t carry it around; it looks up the one row it needs. You can read and edit the same cabinet yourself.</div>
   <div class="toggle" id="cabtog"><span class="led"></span><span id="cablbl">cabinet not connected</span></div>
   <div class="rows" id="rows"></div>
   <div class="cabmeta" id="cabmeta"></div>
   <div class="runrow">
-    <button class="act" id="ask">❓ HOW DID TUESDAY DO?</button>
-    <button class="act" id="logshow">✎ log tonight&#39;s show</button>
+    <button class="act" id="ask">❓ WHAT CAME IN TUESDAY?</button>
+    <button class="act" id="logshow">✎ log today&#39;s delivery</button>
   </div>
   <div class="answer" id="answer"></div>
 </div>
@@ -185,6 +185,7 @@ button.ghost{background:transparent;color:var(--dim);font-size:13px}
   <p><b>Repeating yourself is a symptom.</b> If you&#39;re saying the same rule for the third time, it fell off. Don&#39;t say it louder — put it on the shelf.</p>
   <p><b>"I don&#39;t know" comes out sounding like an answer.</b> Ask about Tuesday with no cabinet and you get a confident number that is simply invented — ask twice and it changes. Wrong doesn&#39;t look wrong. That&#39;s the thing to watch for.</p>
   <p><b>Memory is not a filing cabinet.</b> The shelf is a few facts about you. The cabinet is every row of what happened — and it looks up the one row it needs instead of hauling all 340 onto the desk. Putting records on the shelf just buries the rules.</p>
+  <p><b>The cabinet is yours, not the AI&#39;s.</b> You can open it, read it, and fix it without asking anything. That&#39;s what makes it the source of truth — it stays right whether or not any AI is running.</p>
 </div>
 
 <div class="nav"><a href="../">← back to HOW CLAUDE WORKS (the Shape Store)</a></div>
@@ -206,7 +207,7 @@ const CHAT=[
 let desk=[],shelf=[],gone=[],chatI=0,uid=0;
 
 /* the cabinet — far more rows than could ever sit on the desk */
-const SEED=[["Sat",1120,240],["Sun",1010,185],["Tue",1240,310],["Wed",890,150],["Thu",1330,402]];
+const SEED=[["Sat",8,2],["Sun",6,0],["Tue",9,3],["Wed",7,1],["Thu",8,2]];
 let rows=[],rowTotal=0,cabinetOn=false,lastGuess=null,hitRow=null;
 const num=n=>n.toLocaleString("en-US");
 const $=s=>document.querySelector(s);
@@ -242,7 +243,7 @@ function draw(){
   const rw=$("#rows");rw.innerHTML="";
   rows.forEach(r=>{const el=document.createElement("div");
     el.className="row"+(r.fresh?" new":"")+(hitRow===r?" hit":"");
-    el.innerHTML='<span class="d">'+r.d+'</span><span>'+num(r.v)+' viewers</span><span>$'+r.g+'</span>';
+    el.innerHTML='<span class="d">'+r.d+'</span><span>'+r.v+' shapes</span><span>'+r.g+' red</span>';
     rw.appendChild(el);});
   $("#cabmeta").textContent="showing "+rows.length+" of "+num(rowTotal)+" rows · far too many for the desk";
   $("#cabtog").className="toggle"+(cabinetOn?" on":"");
@@ -309,31 +310,31 @@ $("#cabtog").addEventListener("click",()=>{
 $("#ask").addEventListener("click",()=>{
   const a=$("#answer");
   if(!cabinetOn){
-    const g=700+Math.floor(Math.random()*800), gg=120+Math.floor(Math.random()*300);
+    const g=4+Math.floor(Math.random()*9), gg=Math.floor(Math.random()*5);
     const repeat=lastGuess!==null&&lastGuess!==g;
     a.className="answer show bad";
-    a.innerHTML='"Tuesday did around <b>'+num(g)+' viewers</b>, roughly $'+gg+'."'+
+    a.innerHTML='"Tuesday&#39;s batch was about <b>'+g+' shapes</b>, maybe '+gg+' red."'+
       '<span class="note">✗ Made up. It has no record of Tuesday — but it answered anyway, and it sounded certain.'+
-      (repeat?' <b>Last time it said '+num(lastGuess)+'.</b> Ask again and the number changes, because it isn&#39;t reading anything.':' Ask again and watch the number change.')+'</span>';
-    log('<span class="r">▸ answered "'+num(g)+' viewers" — with nothing to read. That&#39;s a guess wearing a confident voice.</span>');
+      (repeat?' <b>Last time it said '+lastGuess+'.</b> Ask again and the number changes, because it isn&#39;t reading anything.':' Ask again and watch the number change.')+'</span>';
+    log('<span class="r">▸ answered "'+g+' shapes" — with nothing to read. That&#39;s a guess wearing a confident voice.</span>');
     lastGuess=g;hitRow=null;draw();return;
   }
   const r=rows.find(x=>x.d==="Tue");
   hitRow=r;
   a.className="answer show good";
-  a.innerHTML='"Tuesday did <b>'+num(r.v)+' viewers</b> and $'+r.g+'."'+
+  a.innerHTML='"Tuesday&#39;s batch was <b>'+r.v+' shapes</b>, '+r.g+' of them red."'+
     '<span class="note">✓ Looked it up. It pulled <b>one row</b> onto the desk — not all '+num(rowTotal)+'. That&#39;s the whole trick.</span>';
   log('<span class="a">▸ opens the cabinet, finds Tuesday, pulls that one row.</span>');
-  push("cabinet","📄 Tue — "+num(r.v)+" viewers, $"+r.g,{pulled:true});
+  push("cabinet","📄 Tue — "+r.v+" shapes, "+r.g+" red",{pulled:true});
   draw();
 });
 
 $("#logshow").addEventListener("click",()=>{
-  const v=800+Math.floor(Math.random()*700), g=140+Math.floor(Math.random()*320);
+  const v=5+Math.floor(Math.random()*7), g=Math.floor(Math.random()*4);
   rows.forEach(r=>r.fresh=false);
   rows.push({d:"Fri",v,g,fresh:true});rowTotal++;
   if(rows.length>6)rows.shift();
-  log('<span class="g">▸ an agent wrote tonight&#39;s row: '+num(v)+' viewers, $'+g+'.</span> Nobody has to remember it — next week it&#39;s just there.');
+  log('<span class="g">▸ an agent wrote today&#39;s row: '+v+' shapes, '+g+' red.</span> Nobody has to remember it — next week it&#39;s just there.');
   draw();
 });
 
