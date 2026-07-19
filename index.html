@@ -28,6 +28,7 @@ h1 em{font-style:normal;color:var(--cy)}
 .card .why b{color:var(--txt)}
 
 .tray{display:flex;flex-wrap:wrap;gap:9px}
+.tray .none{color:#44557a;font-size:13px;font-style:italic;padding:2px 0}
 .chip{padding:10px 15px;border-radius:11px;background:var(--chip);border:1.5px solid var(--edge);
   font-size:14.5px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:10px;transition:.15s}
 .chip .led{width:9px;height:9px;border-radius:50%;background:#3a4763;transition:.15s;flex:none}
@@ -121,18 +122,18 @@ h1 em{font-style:normal;color:var(--cy)}
 
 <header>
   <h1>HOW <em>CLAUDE</em> WORKS</h1>
-  <div class="sub">Shapes and colors, so you can watch the <b>machinery</b>. Flip switches, press RUN, see what changes.</div>
+  <div class="sub">Shapes and colors, so you can watch the <b>machinery</b>. It starts knowing <b>nothing</b> — press RUN and answer what it asks.</div>
 </header>
 
 <div class="card">
   <h2>① YOUR RULES <i>— read before EVERY job</i></h2>
-  <div class="why">You said these out loud once. Claude wrote them down and re-reads them every time — it never needs reminding.</div>
+  <div class="why">You never write these. Claude asks, you answer once, and it writes the rule down — then obeys it forever. Tap any rule to switch it off and watch what changes.</div>
   <div class="tray" id="ruleTray"></div>
 </div>
 
 <div class="card">
   <h2>② MEMORY <i>— notes Claude wrote itself</i></h2>
-  <div class="why">You never mentioned these. Claude learned them on its own and checks them before acting.</div>
+  <div class="why">Some come from your answers. Some Claude noticed on its own, with nobody telling it.</div>
   <div class="tray" id="memTray"></div>
 </div>
 
@@ -176,7 +177,8 @@ h1 em{font-style:normal;color:var(--cy)}
 
 <div class="card learnbox">
   <h3>THE WHOLE TRICK</h3>
-  <p><b>Your rules shape everything, silently.</b> The store sells what it sells — your rules decided what survived. Turn "never red" off and red floods back. You never said a word.</p>
+  <p><b>You never wrote a rule. You answered a question.</b> Claude asked your favorite color, you tapped one — that became a memory, and the memory became a standing rule. Same as talking to it.</p>
+  <p><b>Rules shape everything, silently.</b> The store sells what it sells; your rules decided what survived. Turn "never red" off and red floods back. You never say it twice.</p>
   <p><b>Memory saves wasted trips.</b> Triangle note ON: Claude doesn&#39;t even ask. OFF: it orders triangles, hears OUT OF STOCK, calls again. Same store, dumber shopper.</p>
   <p><b>The Board keeps you boss.</b> On the gold square Claude asks instead of deciding, and waits. Your answer becomes a memory — it never asks again. (In real setups, several Claudes share one board.)</p>
   <p><b>The store is an "API."</b> Claude can&#39;t invent shapes. It goes out for real things — a store, a weather service, your sales numbers — and arranges them your way.</p>
@@ -187,29 +189,36 @@ h1 em{font-style:normal;color:var(--cy)}
 </div>
 
 <script>
-const RULES=[
-  {id:"r_red",  txt:"🚫 Never use RED", on:true},
-  {id:"r_sq",   txt:"⬛ SQUARES only", on:false},
-  {id:"r_max",  txt:"🖐 Never show more than 5", on:true},
-  {id:"r_sort", txt:"📏 Line them up big → small", on:true},
-];
-const MEMS=[
-  {id:"m_blue", txt:"💙 Blue is the favorite — put blue first", on:true},
-  {id:"m_tri",  txt:"📐 Triangle bin has been empty all week", on:true},
-];
 const COLORS={red:"#f0564c",blue:"#4c8df0",green:"#43c96b",yellow:"#f0c93c",gold:"#f5c542"};
-const on=new Set([...RULES.filter(r=>r.on),...MEMS.filter(m=>m.on)].map(x=>x.id));
-let running=false, goldPolicy=null; // null = never asked; "yes"/"no" = board decision
-const $=s=>document.querySelector(s);
+const CNAME={red:"RED",blue:"BLUE",green:"GREEN",yellow:"YELLOW"};
+const DOT={red:"🔴",blue:"💙",green:"💚",yellow:"💛"};
 
-function chipEl(o,cls){const d=document.createElement("div");
-  d.className="chip "+cls+(on.has(o.id)?" on":" off");
-  d.innerHTML='<span class="led"></span>'+o.txt;
-  d.addEventListener("click",()=>{if(on.has(o.id)){on.delete(o.id);d.className="chip "+cls+" off";}
-    else{on.add(o.id);d.className="chip "+cls+" on";}});
-  return d;}
-RULES.forEach(r=>$("#ruleTray").appendChild(chipEl(r,"rule")));
-MEMS.forEach(m=>$("#memTray").appendChild(chipEl(m,"mem")));
+const on=new Set();
+const rules=new Map();   /* id -> {txt} — everything here was YOUR answer */
+const mems=new Map();    /* id -> {txt} — everything here Claude noticed itself */
+let running=false, runs=0, favColor=null, banColor=null, goldPolicy=null;
+const asked=new Set();   /* questions already put to you — never asked twice */
+const $=s=>document.querySelector(s);
+const has=id=>on.has(id);
+const bare=t=>t.replace(/^\S+\s/,"");
+
+function renderTray(sel,map,cls,emptyTxt){
+  const t=$(sel);t.innerHTML="";
+  if(!map.size){t.innerHTML='<div class="none">'+emptyTxt+'</div>';return;}
+  map.forEach((o,id)=>{
+    const d=document.createElement("div");
+    d.className="chip "+cls+(on.has(id)?" on":" off")+(o.fresh?" learned":"");
+    d.innerHTML='<span class="led"></span>'+o.txt;
+    d.addEventListener("click",()=>{
+      if(on.has(id)){on.delete(id);d.classList.replace("on","off");}
+      else{on.add(id);d.classList.replace("off","on");}});
+    t.appendChild(d);});}
+function drawTrays(){
+  renderTray("#ruleTray",rules,"rule","nothing yet — you haven&#39;t told Claude anything");
+  renderTray("#memTray",mems,"mem","nothing yet — Claude hasn&#39;t noticed anything");}
+function addRule(id,txt){rules.set(id,{txt,fresh:true});on.add(id);drawTrays();}
+function addMem(id,txt){mems.set(id,{txt,fresh:true});on.add(id);drawTrays();}
+drawTrays();
 
 const con=$("#con");
 function say(html,ms){return new Promise(res=>{const d=document.createElement("div");d.innerHTML=html;
@@ -223,16 +232,19 @@ async function step(i,cls){setN(i,cls);await new Promise(r=>setTimeout(r,420));}
 
 function blogAdd(html){const b=$("#blog");if(b.querySelector(".none"))b.innerHTML="";
   const d=document.createElement("div");d.innerHTML=html;b.appendChild(d);}
-function askBoard(qtext){return new Promise(res=>{
+function askBoard(qtext,opts){return new Promise(res=>{
   const qb=$("#qbox");qb.innerHTML="";
   const q=document.createElement("div");q.className="q";
   q.innerHTML='<div class="qt">'+qtext+'</div>';
-  const y=document.createElement("button");y.className="yes";y.textContent="✓ Yes, get it";
-  const n=document.createElement("button");n.className="no";n.textContent="✗ No";
-  y.addEventListener("click",()=>{qb.innerHTML='<div class="none">nothing needs you right now</div>';res(true);});
-  n.addEventListener("click",()=>{qb.innerHTML='<div class="none">nothing needs you right now</div>';res(false);});
-  q.appendChild(y);q.appendChild(n);qb.appendChild(q);
+  opts.forEach(o=>{const b=document.createElement("button");
+    b.className=o.cls||"yes";b.textContent=o.label;
+    b.addEventListener("click",()=>{qb.innerHTML='<div class="none">nothing needs you right now</div>';res(o.val);});
+    q.appendChild(b);});
+  qb.appendChild(q);
+  $("#n4").classList.remove("lit");$("#n4").classList.add("hold");
+  blogAdd('<span class="who">Claude:</span> posted a question — waiting on you ⏳');
   q.scrollIntoView({behavior:"smooth",block:"center"});});}
+function boardDone(){$("#n4").classList.remove("hold");$("#n4").classList.add("lit");}
 
 function shapeSVG(s,small){
   const px=small?Math.max(16,Math.round(s.size*.55)):s.size, c=COLORS[s.color];
@@ -254,22 +266,26 @@ function storeBatch(n,allowTri){
 
 async function run(){
   if(running)return;running=true;$("#run").disabled=true;
-  resetBoardFlow();con.innerHTML="";
-  const has=id=>on.has(id);
+  resetBoardFlow();con.innerHTML="";runs++;
+  rules.forEach(o=>o.fresh=false);mems.forEach(o=>o.fresh=false);drawTrays();
 
   await step(0);await say('<span class="c">▸ you:</span> "get me a bunch of shapes, show them nice"');
+
   await step(1);
-  const active=RULES.filter(r=>has(r.id)).map(r=>r.txt.replace(/^..\s/,""));
-  await say('<span class="c">▸ reads your rules:</span> '+(active.length?active.join(" · "):'<span class="d">none — anything goes</span>'));
+  const active=[...rules].filter(([id])=>has(id)).map(([,o])=>bare(o.txt));
+  await say('<span class="c">▸ reads your rules:</span> '+(active.length?active.join(" · "):
+    '<span class="d">none yet — you haven&#39;t told it anything, so anything goes</span>'));
+
   await step(2);
   if(has("m_tri"))await say('<span class="v">▸ memory:</span> "triangle bin is empty" — won&#39;t waste a trip.');
-  if(has("m_blue"))await say('<span class="v">▸ memory:</span> "blue is the favorite" — blue goes up front.');
-  if(goldPolicy)await say('<span class="v">▸ memory:</span> board decision on gold squares: <b>'+(goldPolicy==="yes"?"always yes":"never")+'</b>.');
-  if(!has("m_tri")&&!has("m_blue")&&!goldPolicy)await say('<span class="d">▸ memory: nothing useful found.</span>');
+  if(has("m_fav"))await say('<span class="v">▸ memory:</span> "'+CNAME[favColor]+' is the favorite".');
+  if(goldPolicy)await say('<span class="v">▸ memory:</span> gold squares — <b>'+(goldPolicy==="yes"?"always yes":"never")+'</b>.');
+  if(!mems.size&&!goldPolicy)await say('<span class="d">▸ memory: empty. First trip.</span>');
 
+  /* ── the store ── */
   await step(3);
   await say('<span class="a">▸ walks into the shape store.</span>',700);
-  let batch=[];
+  let batch=[], sawShort=false;
   if(has("m_tri")){
     await say('<span class="a">▸ → STORE:</span> "8 shapes please — <b>no triangles</b>"');
     batch=storeBatch(8,false);
@@ -279,88 +295,125 @@ async function run(){
     batch=storeBatch(8,true);
     const tris=batch.filter(s=>s.kind==="triangle").length;
     if(tris>0){
+      sawShort=true;
       const kept0=batch.filter(s=>s.kind!=="triangle");
       await say('<span class="a">▸ ← STORE:</span> '+kept0.map(emo).join(" ")+' <span class="r">…"NO TRIANGLES TODAY" — '+tris+' missing</span>');
-      await say('<span class="a">▸ → STORE:</span> "fine — '+tris+' more, no triangles" <span class="d">(a wasted trip memory would have skipped)</span>');
+      await say('<span class="a">▸ → STORE:</span> "fine — '+tris+' more, no triangles" <span class="d">(a wasted trip)</span>');
       batch=kept0.concat(storeBatch(tris,false));
       await say('<span class="a">▸ ← STORE:</span> '+batch.map(emo).join(" "));
     }else{
-      await say('<span class="a">▸ ← STORE:</span> '+batch.map(emo).join(" ")+' <span class="d">(got lucky — no triangles)</span>');
+      await say('<span class="a">▸ ← STORE:</span> '+batch.map(emo).join(" ")+' <span class="d">(no triangles in this batch)</span>');
     }
   }
 
-  /* the premium gold square — a decision only the human makes */
+  /* ── the board: Claude asks, your answers become memories, memories become rules ── */
   await step(4);
   let goldBought=false;
-  await say('<span class="gold">▸ STORE: "PREMIUM GOLD SQUARE. Rare. Costs extra."</span>',750);
-  if(goldPolicy==="yes"){
-    goldBought=true;
-    await say('<span class="v">▸ memory says you always want it</span> — bought without asking.');
-    blogAdd('<span class="who">Claude:</span> bought the gold square (your standing yes)');
-  }else if(goldPolicy==="no"){
-    await say('<span class="v">▸ memory says never</span> — walks right past it.');
-    blogAdd('<span class="who">Claude:</span> skipped the gold square (your standing no)');
-  }else{
-    $("#n4").classList.remove("lit");$("#n4").classList.add("hold");
-    await say('<span class="a">▸ Claude does NOT spend your money on its own. Posts it to THE BOARD and waits…</span> <b>↑ answer above</b>',300);
-    blogAdd('<span class="who">Claude:</span> posted a question — waiting on you ⏳');
-    const ans=await askBoard('🏪 The store offers a <b>premium GOLD SQUARE</b> (costs extra). Buy it?');
-    goldPolicy=ans?"yes":"no";goldBought=ans;
-    $("#n4").classList.remove("hold");$("#n4").classList.add("lit");
-    blogAdd('<span class="dec">YOU DECIDED:</span> gold squares — '+(ans?"YES, always":"no, never"));
-    const c=document.createElement("div");c.className="chip mem learned";
-    c.innerHTML='<span class="led"></span>✨ Board decision: gold squares = '+(ans?"always yes":"never");
-    $("#memTray").appendChild(c);
+
+  if(!favColor){
+    await say('<span class="a">▸ 8 shapes, no instructions. Claude won&#39;t guess your taste — it asks.</span>',300);
+    const fav=await askBoard('🎨 You never said what you like. <b>Favorite color?</b>',
+      [{label:"💙 Blue",val:"blue"},{label:"💚 Green",val:"green"},{label:"💛 Yellow",val:"yellow"}]);
+    boardDone();favColor=fav;
+    blogAdd('<span class="dec">YOU SAID:</span> favorite color — '+CNAME[fav]);
+    addMem("m_fav",DOT[fav]+" "+CNAME[fav]+" is the favorite");
+    await say('<span class="g">▸ writes a memory:</span> "'+CNAME[fav]+' is the favorite."');
+    addRule("r_fav",DOT[fav]+" Put "+CNAME[fav]+" first");
+    await say('<span class="g">▸ that memory becomes a rule:</span> put '+CNAME[fav]+' first — from now on, forever.');
+
+    const ban=await askBoard('🚫 Anything you <b>never</b> want to see?',
+      [{label:"🔴 No red",val:"red",cls:"no"},{label:"nothing, all good",val:null}]);
+    boardDone();
+    if(ban){banColor=ban;blogAdd('<span class="dec">YOU SAID:</span> never '+CNAME[ban]);
+      addRule("r_ban","🚫 Never use "+CNAME[ban]);
+      await say('<span class="g">▸ new rule:</span> never use '+CNAME[ban]+'.');}
+    else blogAdd('<span class="dec">YOU SAID:</span> no bans');
+  }
+  else if(!asked.has("cap")){
+    asked.add("cap");
+    await say('<span class="a">▸ that&#39;s 8 again. Claude asks before deciding for you.</span>',300);
+    const cap=await askBoard('🖐 Eight is a lot. <b>Cap it at 5?</b>',
+      [{label:"✓ Yes, max 5",val:true},{label:"✗ No, show all",val:false,cls:"no"}]);
+    boardDone();
+    if(cap){addRule("r_max","🖐 Never show more than 5");
+      blogAdd('<span class="dec">YOU SAID:</span> cap at 5');
+      await say('<span class="g">▸ new rule:</span> never show more than 5.');}
+    else{blogAdd('<span class="dec">YOU SAID:</span> show them all');
+      await say('<span class="g">▸ no rule made</span> — and it won&#39;t ask again.');}
+  }
+  else if(goldPolicy===null){
+    await say('<span class="gold">▸ STORE: "PREMIUM GOLD SQUARE. Rare. Costs extra."</span>',750);
+    await say('<span class="a">▸ Claude does NOT spend your money on its own.</span> <b>↑ answer above</b>',300);
+    const ans=await askBoard('🏪 The store offers a <b>premium GOLD SQUARE</b> (costs extra). Buy it?',
+      [{label:"✓ Yes, get it",val:true},{label:"✗ No",val:false,cls:"no"}]);
+    boardDone();goldPolicy=ans?"yes":"no";goldBought=ans;
+    blogAdd('<span class="dec">YOU SAID:</span> gold squares — '+(ans?"YES, always":"no, never"));
+    addMem("m_gold","✨ Gold squares = "+(ans?"always yes":"never"));
     await say('<span class="g">▸ your answer is written to memory</span> — it never asks again.');
   }
+  else if(!asked.has("sort")){
+    asked.add("sort");
+    const srt=await askBoard('📏 Last one. <b>Line them up big → small?</b>',
+      [{label:"✓ Yes",val:true},{label:"✗ Leave them",val:false,cls:"no"}]);
+    boardDone();
+    if(srt){addRule("r_sort","📏 Line them up big → small");
+      blogAdd('<span class="dec">YOU SAID:</span> big → small');
+      await say('<span class="g">▸ new rule:</span> line them up big → small.');}
+    else{blogAdd('<span class="dec">YOU SAID:</span> leave the order alone');
+      await say('<span class="g">▸ no rule made</span> — and it won&#39;t ask again.');}
+  }
+
+  if(goldPolicy==="yes"&&!goldBought){goldBought=true;
+    await say('<span class="v">▸ memory says you always want the gold square</span> — bought without asking.');
+    blogAdd('<span class="who">Claude:</span> bought the gold square (your standing yes)');}
+  else if(goldPolicy==="no"&&!goldBought){
+    await say('<span class="v">▸ memory says never</span> — walks past it.');}
   if(goldBought)batch.push({kind:"square",color:"gold",size:58});
 
-  /* apply your rules */
+  /* ── apply your rules ── */
   let kept=batch.slice(), binned=[];
-  if(has("r_red")){const cut=kept.filter(s=>s.color==="red");kept=kept.filter(s=>s.color!=="red");
-    if(cut.length){binned.push(...cut);await say('<span class="r">▸ rule "never red":</span> threw out '+cut.length+'.');}}
-  if(has("r_sq")){const cut=kept.filter(s=>s.kind!=="square");kept=kept.filter(s=>s.kind==="square");
-    if(cut.length){binned.push(...cut);await say('<span class="r">▸ rule "squares only":</span> threw out '+cut.length+'.');}}
-  if(has("r_max")&&kept.length>5){const gold=kept.filter(s=>s.color==="gold"),rest=kept.filter(s=>s.color!=="gold");
-    kept=gold.concat(rest).slice(0,5);const cut=gold.concat(rest).slice(5);binned.push(...cut);
-    await say('<span class="r">▸ rule "max 5":</span> kept 5, binned '+cut.length+'.');}
+  if(has("r_ban")&&banColor){const cut=kept.filter(s=>s.color===banColor);kept=kept.filter(s=>s.color!==banColor);
+    if(cut.length){binned.push(...cut);await say('<span class="r">▸ rule "never '+CNAME[banColor]+'":</span> threw out '+cut.length+'.');}}
   if(has("r_sort")){kept.sort((a,b)=>b.size-a.size);await say('<span class="c">▸ rule "big → small":</span> lined up by size.');}
-  if(has("m_blue")&&!has("r_sort")){kept.sort((a,b)=>(a.color==="blue"?-1:0)-(b.color==="blue"?-1:0));}
+  if(has("r_fav")&&favColor){kept.sort((a,b)=>(b.color===favColor)-(a.color===favColor));
+    await say('<span class="c">▸ rule "'+CNAME[favColor]+' first":</span> moved to the front.');}
+  if(has("r_max")&&kept.length>5){const gold=kept.filter(s=>s.color==="gold"),rest=kept.filter(s=>s.color!=="gold");
+    const all=gold.concat(rest);kept=all.slice(0,5);const cut=all.slice(5);binned.push(...cut);
+    await say('<span class="r">▸ rule "max 5":</span> kept 5, binned '+cut.length+'.');}
 
+  /* ── show ── */
   await step(5);
-  const stage=$("#stage");stage.classList.add("show");
+  $("#stage").classList.add("show");
   const out=$("#out");
-  if(kept.length===0){
+  if(!kept.length){
     out.innerHTML='<div class="empty">…nothing survived your rules. Claude would go back — or tell you your rules ate everything. 🤷</div>';
   }else{
     kept.forEach((s,i)=>{const d=document.createElement("div");d.className="shp";d.style.animationDelay=(i*0.09)+"s";
-      const star=(s.color==="gold")?'<span class="star">✨</span>':((has("m_blue")&&s.color==="blue")?'<span class="star">⭐</span>':"");
-      d.innerHTML=star+shapeSVG(s,false);
-      out.appendChild(d);});
+      const star=(s.color==="gold")?'<span class="star">✨</span>':((has("r_fav")&&s.color===favColor)?'<span class="star">⭐</span>':"");
+      d.innerHTML=star+shapeSVG(s,false);out.appendChild(d);});
   }
   if(binned.length){$("#binrow").classList.add("show");
     binned.forEach(s=>{const d=document.createElement("div");d.className="shp";d.innerHTML=shapeSVG(s,true);$("#bin").appendChild(d);});}
-  await say('<span class="g">▸ shows you '+kept.length+' shape'+(kept.length===1?"":"s")+', arranged your way.</span>');
+  await say('<span class="g">▸ shows you '+kept.length+' shape'+(kept.length===1?"":"s")+(rules.size?", arranged your way.":", in whatever order it got them.")+'</span>');
   blogAdd('<span class="who">Claude:</span> delivered '+kept.length+' shapes'+(binned.length?' ('+binned.length+' binned by your rules)':""));
 
-  /* learn */
+  /* ── learn ── */
   $("#loop").classList.add("lit");
-  if(!has("m_tri")&&batch.some(s=>s.kind!=="triangle")){
-    const c=document.createElement("div");c.className="chip mem learned";
-    c.innerHTML='<span class="led"></span>✨ Store keeps running out of triangles';
-    c.addEventListener("click",()=>c.classList.toggle("off"));$("#memTray").appendChild(c);
-    await say('<span class="g">▸ writes a note:</span> "store keeps running out of triangles" — next run starts smarter.');
+  if(sawShort&&!mems.has("m_tri")){
+    addMem("m_tri","📐 Store keeps running out of triangles");
+    await say('<span class="g">▸ nobody told it this —</span> it noticed the store was out and wrote it down itself.');
   }else{
     await say('<span class="g">▸ run logged.</span>');
   }
   running=false;$("#run").disabled=false;
 }
 $("#run").addEventListener("click",run);
-$("#reset").addEventListener("click",()=>{resetBoardFlow();goldPolicy=null;
+$("#reset").addEventListener("click",()=>{resetBoardFlow();
+  runs=0;favColor=null;banColor=null;goldPolicy=null;
+  on.clear();rules.clear();mems.clear();asked.clear();drawTrays();
   con.innerHTML='<span class="d">Claude&#39;s thinking will appear here…</span>';
   $("#qbox").innerHTML='<div class="none">nothing needs you right now</div>';
-  $("#blog").innerHTML='<div class="none">quiet so far</div>';
-  document.querySelectorAll(".chip.learned").forEach(c=>c.remove());});
+  $("#blog").innerHTML='<div class="none">quiet so far</div>';});
 </script>
 </body>
 </html>
